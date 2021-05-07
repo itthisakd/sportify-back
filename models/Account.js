@@ -50,6 +50,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      lastActive: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+
       searchLocation: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -66,8 +71,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      lastActive: {
-        type: DataTypes.DATE,
+      showInStack: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      showActive: {
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
     },
