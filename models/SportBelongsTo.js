@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   SportBelongsTo.associate = (models) => {
     SportBelongsTo.hasMany(models.Sport, {
       foreignKey: {
-        name: "sportName",
+        name: "sportId",
         allowNull: false,
       },
       onDelete: "RESTRICT",

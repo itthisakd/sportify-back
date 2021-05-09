@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       planId: {
         type: DataTypes.ENUM,
         values: ["BASIC", "SEMI-PRO", "PRO"],
+        allowNull: false,
       },
       firstName: {
         type: DataTypes.STRING,
@@ -37,15 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      company: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       school: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-
       currentLocation: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -54,7 +50,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
-
       searchLocation: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -96,7 +91,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Account.associate = (models) => {
-    Account.HasMany(models.Media, {
+    Account.hasMany(models.Media, {
       foreignKey: {
         name: "accountId",
         allowNull: false,
