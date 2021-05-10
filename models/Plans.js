@@ -17,18 +17,18 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       underscored: true,
+      timestamps: false,
     }
   );
 
   // REVIEW CASCADE ??
+  // NO, account belongs to plan so account can be deleted but plan will remain
   Plans.associate = (models) => {
-    Plans.belongsTo(models.Account, {
+    Plans.hasMany(models.Account, {
       foreignKey: {
         name: "planId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
 

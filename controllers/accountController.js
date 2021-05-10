@@ -12,12 +12,16 @@ exports.protect = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
 
     if (!token)
-      return res.status(401).json({ message: "you are unauthorized" });
+      return res.status(401).json({ message: "ํYOU ARE UNAUTHORIZED" });
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const account = await Account.findOne({ where: { id: payload.id } });
-    if (!user) return res.status(400).json({ message: "user not found" });
-    req.account = account;
+    //FIXME JOIN TABLE HERE TO GIVE data_account as shown below
+    const account = await Account.findOne({
+      attributes: [["id", "userId"]],
+      where: { id: payload.id },
+    });
+    if (!user) return res.status(400).json({ message: "User not found" });
+    req.user = account;
     next();
   } catch (err) {
     next(err);
@@ -25,39 +29,73 @@ exports.protect = async (req, res, next) => {
 };
 
 // FIXME login by google account
-exports.myAccount = (req, res, next) => {
+const data_account = {
+  id: 1,
+  firstName: "Amy",
+  gender: "female",
+  phoneNumber: "0925419369",
+  email: "amy@gmail.com",
+  dob: "2001-09-09",
+  aboutMe:
+    "I am nice because I am veyr very nice and also extremely kind and nice.",
+  instagram: "amylee",
+  sporify: "samy",
+  job: "",
+  company: "",
+  school: "Clerk County College",
+  searchLocation: "",
+  searchDistance: 45,
+  searchAge: "18-40",
+  searchGender: "a",
+  currentLocation: "",
+  lastActive: "2020-09-0900:00:09",
+  showActive: 1,
+  showInStack: 1,
+
+  //––––––––––––––––––––––––––FROM SEPERATE TABLE––––––––––––––––––––––––
+  planName: "lite",
+  planId: "1",
+  sports: [
+    { id: 1, sportName: "Basketball" },
+    { id: 3, sportName: "Badminton" },
+    { id: 6, sportName: "Tennis" },
+    { id: 7, sportName: "Golf" },
+    { id: 96, sportName: "Fencing" },
+  ],
+  images: [
+    {
+      image:
+        "https://i.picsum.photos/id/1002/600/900.jpg?hmac=4BSgpJzasHKS9vEgQ_Kn3WUjgvc1sUZv-E10bf1bCyA",
+    },
+    {
+      image:
+        "https://i.picsum.photos/id/277/600/900.jpg?hmac=0SZDnUgJesoCsIFVR9u9uG9hUC3dQOxx0_pgop-aIoY",
+    },
+    {
+      image:
+        "https://i.picsum.photos/id/705/600/900.jpg?hmac=19EE_8IKXcp7maJfLind1IgeEHKHlpbeSbN6o5uydJY",
+    },
+    //GIVE IMAGES IN UPLOADED ORDER
+  ],
+
+  //––––––––––––––––––––––––––GENERATED–––––––––––––––––––––––––
+  recentlyActive: 1,
+  //–––––––––––––––––
+  // distance: "6km",
+  age: 18,
+  locationName: "Bangkok, Thailand",
+  // age: DateTime.now().diff(DateTime.fromISO(this.dob), "years"),
+};
+
+exports.myAccount = async (req, res, next) => {
   try {
-    const {
-      planId,
-      firstName,
-      gender,
-      email,
-      dateOfBirth,
-      aboutMe,
-      instagram,
-      job,
-      company,
-      school,
-      searchLocation,
-      currentLocation,
-      lastActive,
-    } = req.myAccount;
-    res.status(200).json({
-      myAccount: {
-        planId,
-        firstName,
-        gender,
-        email,
-        dateOfBirth,
-        aboutMe,
-        instagram,
-        job,
-        company,
-        school,
-        searchLocation,
-        currentLocation,
-        lastActive,
-      },
+    const { userId } = req.user
+    const user = await Account.findOne({
+      where: { id: userId },
+    });
+
+    
+    res.status(200).json({ todo: "INSERT completed data here"
     });
   } catch (err) {
     next(err);
@@ -184,7 +222,7 @@ exports.updateAccount = async (req, res, next) => {
       },
       { where: { id: req.account.id } }
     );
-    res.status(200).json({ message: "update account successfully" });
+    res.status(200).json({ message: "Update account successfully" });
   } catch (err) {
     next(err);
   }

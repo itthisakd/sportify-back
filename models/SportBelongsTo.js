@@ -14,27 +14,25 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       underscored: true,
+      timestamps: false,
     }
   );
 
   SportBelongsTo.associate = (models) => {
-    SportBelongsTo.hasMany(models.Sport, {
+    SportBelongsTo.belongsTo(models.Sport, {
       foreignKey: {
         name: "sportId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
 
     SportBelongsTo.associate = (models) => {
-      SportBelongsTo.BelongsToMany(models.Account, {
+      SportBelongsTo.belongsTo(models.Account, {
         foreignKey: {
           name: "accountId",
           allowNull: false,
         },
-        onDelete: "RESTRICT",
-        onUpdate: "RESTRICT",
+
       });
     };
   };

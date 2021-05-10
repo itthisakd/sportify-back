@@ -11,16 +11,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       superLike: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
         allowNull: true,
       },
       likeReturned: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-      },
-      unmatched: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
       },
     },
     {
@@ -36,8 +32,6 @@ module.exports = (sequelize, DataTypes) => {
         name: "fromId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
 
@@ -48,8 +42,6 @@ module.exports = (sequelize, DataTypes) => {
         name: "toId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
 
