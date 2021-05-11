@@ -52,7 +52,7 @@ const output_account = {
       image:
         "https://i.picsum.photos/id/705/600/900.jpg?hmac=19EE_8IKXcp7maJfLind1IgeEHKHlpbeSbN6o5uydJY",
     },
-    //******GIVE IMAGES IN UPLOADED ORDER, order by timestamp
+    //******GIVE IMAGES IN UPLOADED ORDER, order by timestamp, created time
   ],
   //––––––––––––––––––––––––––JOINED FROM MATCHES –––––––––––––––––––––––
   matches: [
@@ -67,14 +67,12 @@ const output_account = {
       fromId: 5,
       toId: 2,
       superlike: 0,
-      like_returned: 0,
+      like_returned: 1,
     },
   ],
   //––––––––––––––––––––––––––GENERATED–––––––––––––––––––––––––
   recentlyActive: 1, //show recentelyActive TRUE if lastActive is within 24 users
-  distance: "6km", //generated from currentLocation (OR searchLocation) using isNearby
-  nearby: 1, //generated from currentLocation (OR searchLocation) using isNearby
-  age: 18, //DateTime.now().diff(DateTime.fromISO(this.dob), "years"),
+  age: 18, //DateTime.now().diff(DateTime.fromISO(dob), "years"),
   locationName: "Bangkok, Thailand", //Generated using API ****CONFIRM WITH AUM****
 };
 
@@ -222,33 +220,35 @@ const output_sports = [
   { id: 5, sportName: "Fencing" },
 ];
 
+
+
+
 // COMBINE 5&6 into 1 controller to post and delete in one api
 const info5 = {
-  method: "post",
+  method: "post & delete",
   path: "/sports",
   pagesToBeUsedIn: ["RegisterPage", "EditInfoPage", "SettingsPage"],
   purpose: "to let users select sports, allow bulk create",
-  table: "post in SPORTBELONGSTO",
+  table: "post & delete in SPORTBELONGSTO",
 };
 const body5 = {
   add: [
     { sportId: 1, accountId: 1 },
     { sportId: 5, accountId: 1 },
   ],
+  remove: [{ sportId: 1, accountId: 1 }]
 };
-const info6 = {
-  method: "delete",
-  pagesToBeUsedIn: ["RegisterPage", "EditInfoPage", "SettingsPage"],
-  purpose: "to let users deselect sports allow bulk create",
-  table: "delete in SPORTBELONGSTO",
-};
-const body6 = { remove: [{ sportId: 1, accountId: 1 }] };
+
+
+
+
+
 
 const info7 = {
   method: "post",
   path: "/match",
   pagesToBeUsedIn: ["HomePage"],
-  purpose: "to let users deselect sports allow bulk create",
+  // purpose: "to let users deselect sports allow bulk create",
   table: "post in MATCHES",
 };
 const body7 = {
@@ -257,6 +257,7 @@ const body7 = {
   superlike: 0,
   like_returned: 0,
 };
+
 
 const info7 = {
   method: "patch",
