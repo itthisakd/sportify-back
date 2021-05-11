@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      superLike: {
+      superlike: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
