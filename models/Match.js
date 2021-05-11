@@ -13,10 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       superlike: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 0,
       },
       likeReturned: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: 0,
+      },
+      viewed: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: 0,
       },
     },
     {

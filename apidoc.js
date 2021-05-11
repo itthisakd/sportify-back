@@ -54,23 +54,27 @@ const output_account = {
     },
     //******GIVE IMAGES IN UPLOADED ORDER, order by timestamp, created time
   ],
-  //––––––––––––––––––––––––––JOINED FROM MATCHES –––––––––––––––––––––––
-  matches: [
-    //find matches where TO ID is that of the user and LIKE RETURNED is FALSE
-    {
-      fromId: 1,
-      toId: 2,
-      superlike: 0,
-      like_returned: 0,
-    },
-    {
-      fromId: 5,
-      toId: 2,
-      superlike: 0,
-      like_returned: 1,
-    },
-  ],
-  //––––––––––––––––––––––––––GENERATED–––––––––––––––––––––––––
+  //––––––––––––––––––––––––––JOINED/GENERATED FROM MATCHES –––––––––––––––––––––––
+
+  likedMe: 1, //true if match exist & like_returned === false
+  superlikedMe: 0,
+  
+  // matches: [
+  //   //find matches where TO ID is that of the user and LIKE RETURNED is FALSE
+  //   {
+  //     fromId: 1,
+  //     toId: 2,
+  //     superlike: 0,
+  //     like_returned: 0,
+  //   },
+  //   {
+  //     fromId: 5,
+  //     toId: 2,
+  //     superlike: 0,
+  //     like_returned: 1,
+  //   },
+  // ],
+  // //––––––––––––––––––––––––––GENERATED–––––––––––––––––––––––––
   recentlyActive: 1, //show recentelyActive TRUE if lastActive is within 24 users
   age: 18, //DateTime.now().diff(DateTime.fromISO(dob), "years"),
   locationName: "Bangkok, Thailand", //Generated using API ****CONFIRM WITH AUM****

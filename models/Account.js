@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        // validate: {},
       },
       gender: {
         type: DataTypes.ENUM,
@@ -23,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       aboutMe: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       instagram: {
         type: DataTypes.STRING,
@@ -39,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       currentLocation: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastActive: {
         type: DataTypes.DATE,
@@ -47,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       searchLocation: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       searchAge: {
         type: DataTypes.STRING,
@@ -56,22 +55,27 @@ module.exports = (sequelize, DataTypes) => {
       searchGender: {
         type: DataTypes.ENUM,
         values: ["m", "f", "a"],
+        defaultValue: "a",
       },
       searchDistance: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 80,
       },
       showInStack: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 1,
       },
       showActive: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 1,
       },
       deactivated: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 0,
       },
     },
     {

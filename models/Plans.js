@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       planDesc: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
