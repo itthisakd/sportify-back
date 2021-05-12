@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const Media = sequelize.define(
-    "media",
+    "Media",
     {
       media: {
         type: DataTypes.STRING,
