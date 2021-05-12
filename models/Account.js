@@ -51,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       searchAge: {
         type: DataTypes.STRING,
         allowNull: true,
+        defaultValue: "18-39",
       },
       searchGender: {
         type: DataTypes.ENUM,

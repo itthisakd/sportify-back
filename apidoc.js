@@ -56,8 +56,7 @@ const output_account = {
   ],
   //––––––––––––––––––––––––––JOINED/GENERATED FROM MATCHES –––––––––––––––––––––––
 
-  likedMe: 1, //true if match exist & like_returned === false
-  superlikedMe: 0,
+
   
   // matches: [
   //   //find matches where TO ID is that of the user and LIKE RETURNED is FALSE
@@ -77,8 +76,11 @@ const output_account = {
   // //––––––––––––––––––––––––––GENERATED–––––––––––––––––––––––––
   recentlyActive: 1, //show recentelyActive TRUE if lastActive is within 24 users
   age: 18, //DateTime.now().diff(DateTime.fromISO(dob), "years"),
-  locationName: "Bangkok, Thailand", //Generated using API ****CONFIRM WITH AUM****
+  locationName: "Bangkok, Thailand", //DONE IN FRONT END 
 };
+
+
+
 
 const info2 = {
   method: "get",
@@ -200,6 +202,8 @@ const output_myMatches = [
       },
       //******GIVE IMAGES IN UPLOADED ORDER, order by timestamp
     ],
+    likedMe: 1, //true if match exist & like_returned === false
+    superlikedMe: 0,
     //––––––––––––––––––––––––––GENERATED–––––––––––––––––––––––––
     recentlyActive: 1, //show recentelyActive TRUE if lastActive is within 24 users
     distance: "6km", //generated from currentLocation (OR searchLocation) using isNearby
