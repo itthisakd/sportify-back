@@ -1,21 +1,27 @@
-const { Sport, sequelize } = require("../models");
+const { Sport, SportBelongsTo, Account, sequelize } = require("../models");
 const { Op } = require("sequelize");
 
 exports.getSports = async (req, res, next) => {
   try {
-    res.status(200).json({});
+    const sports = await Sport.findAll({
+      order: [["sportName"]],
+    });
+    res.status(200).json({ sports });
   } catch (err) {
     next(err);
   }
 };
 
-exports.edithUserSports = async (req, res, next) => {
+exports.editUserSports = async (req, res, next) => {
   try {
     const { add, remove } = req.body;
 
     await SportBelongsTo.destroy({});
 
-    await SportBelongsTo.create({});
+    // await SportBelongsTo.destroy({
+    //   remove,
+    //  accountId: req.Account.id
+    // });
 
     res.status(200).json({ message: "User's sports updated successfully" });
   } catch (err) {

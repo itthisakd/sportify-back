@@ -39,14 +39,66 @@ exports.protect = async (req, res, next) => {
 
 exports.myAccount = async (req, res, next) => {
   try {
-    // const { userId } = req.user
-    const userId = 1;
+    const { userId } = req.user;
     const user = await Account.findOne({
       where: { id: userId },
     });
 
-    const plan = await Plans.findOne({
-      where: { id: user.planId },
+    res.status(200).json({ todo: "INSERT completed data here" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.register = async (req, res, next) => {
+  try {
+    const {
+      planId,
+      firstName,
+      password,
+      confirmPassword,
+      gender,
+      email,
+      dateOfBirth,
+      aboutMe,
+      instagram,
+      job,
+      company,
+      school,
+      searchLocation,
+      currentLocation,
+      lastActive,
+    } = req.body;
+    if (password !== confirmPassword)
+      return res
+        .status(400)
+        .json({ message: "password and confirm password doesnt match" });
+    if (gender !== "m" || "f")
+      return res.status(400).json({ message: "please selecet your gender" });
+    if (email === " ")
+      return res.status(400).json({ message: "please fill your email" });
+    if (dateOfBirth === " ")
+      return res
+        .status(400)
+        .json({ message: "please fill your date of birth" });
+    if (aboutMe === " ")
+      return res
+        .status(400)
+        .json({ message: "please explain a bit about yourself " });
+    if (searchLocation === " ")
+      return res.stauts(400).json({ message: "please enter search location" });
+    if (currentLocation === " ")
+      return res
+        .status(400)
+        .json({ message: "please enter your current location " });
+
+    const hashedPassword = await bcrypt.hash(
+      password,
+      +process.env.BCRYPT_SALT
+    );
+    const account = await Account.create({
+      firstName,
+      password: hashedPassword,
     });
 
     const sportsArr = await SportBelongsTo.findAll({

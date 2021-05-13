@@ -8,9 +8,13 @@ router.get(
   // accountController.protect,
   sportController.getSports
 );
+router.post(
+  "/",
+  // accountController.protect,
+  sportController.editUserSports
+);
 
 module.exports = router;
-
 
 const info4 = {
   method: "get",
