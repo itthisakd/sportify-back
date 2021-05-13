@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0,
       },
-      viewed: {
+      seen: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: 0,
@@ -40,9 +40,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     });
-  };
-
-  Match.associate = (models) => {
     Match.belongsTo(models.Account, {
       as: "MatchTo",
       foreignKey: {
@@ -51,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
   };
+
 
   return Match;
 };

@@ -11,6 +11,20 @@ router.get(
   // accountController.protect,
   accountController.myAccount
 );
+
+router.get(
+  "/stack",
+  // accountController.protect,
+  accountController.generateStack
+);
+
+router.get(
+  "/:id",
+  // accountController.protect,
+  accountController.accountById
+);
+
+
 // router.put("/", accountController.protect, accountController.updateAccount);
 
 module.exports = router;
