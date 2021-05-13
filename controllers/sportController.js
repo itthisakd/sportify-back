@@ -11,22 +11,17 @@ exports.getSports = async (req, res, next) => {
 
 exports.edithUserSports = async (req, res, next) => {
   try {
-    const { add, remove } = req.body
+    const { add, remove } = req.body;
 
-    await SportBelongsTo.destroy({})
+    await SportBelongsTo.destroy({});
 
     await SportBelongsTo.create({});
 
-    
-
-    res.status(200).json({message: "User's sports updated successfully"});
+    res.status(200).json({ message: "User's sports updated successfully" });
   } catch (err) {
     next(err);
   }
-}
-
-
-
+};
 
 const info4 = {
   method: "get",
@@ -43,8 +38,6 @@ const output_sports = [
   { id: 5, sportName: "Fencing" },
 ];
 
-
-//@SERN leave this for now :)
 // COMBINE 5&6 into 1 controller to post and delete in one api
 const info5 = {
   method: "post & delete",
@@ -54,9 +47,8 @@ const info5 = {
   table: "post & delete in SPORTBELONGSTO",
 };
 const body5 = {
-  add: [
-    { sportId: 1, accountId: 1 },
-    { sportId: 5, accountId: 1 },
-  ],
-  remove: [{ sportId: 1, accountId: 1 }],
+  add: [1, 2, 4],
+  remove: [5],
 };
+
+
