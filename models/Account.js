@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      spotify: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       job: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -91,27 +95,18 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     });
-  };
-
-  Account.associate = (models) => {
     Account.hasMany(models.Media, {
       foreignKey: {
         name: "accountId",
         allowNull: false,
       },
     });
-  };
-
-  Account.associate = (models) => {
     Account.belongsTo(models.Plans, {
       foreignKey: {
         name: "planId",
         allowNull: false,
       },
     });
-  };
-
-  Account.associate = (models) => {
     Account.hasMany(models.Match, {
       as: "MatchFrom",
       foreignKey: {
@@ -119,9 +114,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     });
-  };
-
-  Account.associate = (models) => {
     Account.hasMany(models.Match, {
       as: "MatchTo",
       foreignKey: {

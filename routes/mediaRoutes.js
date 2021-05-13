@@ -1,19 +1,20 @@
 const express = require("express");
-const sportController = require("../controllers/sportController");
+const mediaController = require("../controllers/mediaController");
 const accountController = require("../controllers/accountController");
 
 const router = express.Router();
 
-router.get(
-  "/",
-  // accountController.protect,
-  sportController.getSports
-);
-
 router.post(
   "/",
   // accountController.protect,
-  sportController.editUserSports
+  upload.single("image"),
+  mediaController.addPhoto
+);
+
+router.delete(
+  "/",
+  // accountController.protect,
+  mediaController.removePhoto
 );
 
 module.exports = router;
