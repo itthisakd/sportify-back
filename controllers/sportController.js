@@ -14,7 +14,7 @@ exports.getSports = async (req, res, next) => {
 
 exports.editUserSports = async (req, res, next) => {
   try {
-    const { add, remove } = req.body;
+    const { addSports: add, removeSports: remove } = req.body;
     // const { userId } = req.user;
     const userId = 1;
 

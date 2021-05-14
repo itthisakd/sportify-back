@@ -15,6 +15,8 @@ exports.addPhoto = async (req, res, next) => {
     const userId = 1;
     console.log("req.file :>> ", req.file);
 
+    
+    // TODO CROP IMAGE TO CLOUDINARY
     const result = await upload(req.file.path);
     fs.unlinkSync(req.file.path);
     const media = result.secure_url;
@@ -27,6 +29,8 @@ exports.addPhoto = async (req, res, next) => {
   }
 };
 
+
+
 exports.removePhoto = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -38,6 +42,8 @@ exports.removePhoto = async (req, res, next) => {
     next(err);
   }
 };
+
+
 
 exports.getPhotos = async (req, res, next) => {
   try {

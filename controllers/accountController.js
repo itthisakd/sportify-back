@@ -1,6 +1,4 @@
 // const { calcDistance } = require("../utilities/calcDistance");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const {
   Account,
   Plans,
