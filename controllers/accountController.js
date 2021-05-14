@@ -10,33 +10,7 @@ const {
   Match,
 } = require("../models");
 const { Op } = require("sequelize");
-
 const { DateTime } = require("luxon");
-
-exports.protect = async (req, res, next) => {
-  try {
-    let token = null;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    )
-      token = req.headers.authorization.split(" ")[1];
-
-    if (!token)
-      return res.status(401).json({ message: "ํYOU ARE UNAUTHORIZED" });
-
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const account = await Account.findOne({
-      attributes: [["id", "userId"]],
-      where: { id: payload.id },
-    });
-    if (!user) return res.status(400).json({ message: "User not found" });
-    req.user = account;
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
 
 exports.myAccount = async (req, res, next) => {
   try {
@@ -54,7 +28,7 @@ exports.myAccount = async (req, res, next) => {
           attributes: ["sportId", "accountId"],
         },
         { model: Plans, attributes: ["id", "planName"] },
-        { model: Media, attributes: [["media", "image"]] },
+        { model: Media, attributes: ["id", ["media", "image"]] },
       ],
       where: { id: userId },
     });
@@ -119,7 +93,7 @@ exports.accountById = async (req, res, next) => {
           attributes: ["sportId", "accountId"],
         },
         { model: Plans, attributes: ["id", "planName"] },
-        { model: Media, attributes: [["media", "image"]] },
+        { model: Media, attributes: ["id", ["media", "image"]] },
       ],
     });
 
@@ -185,7 +159,7 @@ exports.generateStack = async (req, res, next) => {
           attributes: ["sportId", "accountId"],
         },
         { model: Plans, attributes: ["id", "planName"] },
-        { model: Media, attributes: [["media", "image"]] },
+        { model: Media, attributes: ["id", ["media", "image"]] },
         {
           model: Match,
           as: "MatchTo",
@@ -256,62 +230,6 @@ exports.generateStack = async (req, res, next) => {
 
 
 //––––––––––––––––––––––––––
-
-exports.register = async (req, res, next) => {
-  try {
-    const {
-      planId,
-      firstName,
-      password,
-      confirmPassword,
-      gender,
-      email,
-      dateOfBirth,
-      aboutMe,
-      instagram,
-      job,
-      company,
-      school,
-      searchLocation,
-      currentLocation,
-      lastActive,
-    } = req.body;
-    const account = await Account.create({
-      firstName,
-      password: hashedPassword,
-    });
-
-    if (password !== confirmPassword)
-      return res
-        .status(400)
-        .json({ message: "password and confirm password doesnt match" });
-    if (gender !== "m" || "f")
-      return res.status(400).json({ message: "please selecet your gender" });
-    if (email === " ")
-      return res.status(400).json({ message: "please fill your email" });
-    if (dateOfBirth === " ")
-      return res
-        .status(400)
-        .json({ message: "please fill your date of birth" });
-    if (aboutMe === " ")
-      return res
-        .status(400)
-        .json({ message: "please explain a bit about yourself " });
-    if (searchLocation === " ")
-      return res.stauts(400).json({ message: "please enter search location" });
-    if (currentLocation === " ")
-      return res
-        .status(400)
-        .json({ message: "please enter your current location " });
-
-    const hashedPassword = await bcrypt.hash(
-      password,
-      +process.env.BCRYPT_SALT
-    );
-  } catch (err) {
-    next(err);
-  }
-};
 
 // exports.register = async (req, res, next) => {
 //   try {

@@ -127,17 +127,6 @@ exports.getLikedBy = async (req, res, next) => {
       include: [
         {
           model: Account,
-          as: "MatchTo",
-          include: {
-            model: Media,
-            order: [
-              [Media, "createdAt", "ASC"],
-              [Media, "id", "ASC"],
-            ],
-          },
-        },
-        {
-          model: Account,
           as: "MatchFrom",
           include: {
             model: Media,
@@ -162,18 +151,11 @@ exports.getLikedBy = async (req, res, next) => {
         fromId: match.fromId,
         toId: match.toId,
         matchedAt: match.updatedAt,
-        matchAcc:
-          match.MatchTo.id === userId
-            ? {
-                id: match.MatchFrom.id,
-                firstName: match.MatchFrom.firstName,
-                profilePhoto: match.MatchFrom.Media[0]?.media,
-              }
-            : {
-                id: match.MatchTo.id,
-                firstName: match.MatchTo.firstName,
-                profilePhoto: match.MatchTo.Media[0]?.media,
-              },
+        matchAcc: {
+          id: match.MatchFrom.id,
+          firstName: match.MatchFrom.firstName,
+          profilePhoto: match.MatchFrom.Media[0].media,
+        },
       };
     });
 

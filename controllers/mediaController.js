@@ -6,8 +6,6 @@ cloudinary.config({
   api_secret: "A_OyWIsFkAC_OeDer1w9dRYtEqg",
 });
 const { sequelize, Media } = require("../models");
-const { QueryTypes } = require("sequelize");
-const { DateTime } = require("luxon");
 const util = require("util");
 const upload = util.promisify(cloudinary.uploader.upload);
 
@@ -31,11 +29,33 @@ exports.addPhoto = async (req, res, next) => {
 
 exports.removePhoto = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
 
     await Media.destroy({ where: { id } });
 
     res.status(200).json({ message: "Deleted media successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getPhotos = async (req, res, next) => {
+  try {
+    // const userId = req.user.userId;
+    const userId = 1;
+
+    const raw = await Media.findAll({
+      where: { accountId: userId },
+      order: [
+        ["createdAt", "ASC"],
+        ["id", "ASC"],
+      ],
+    });
+    const images = raw.map((image) => {
+      return { id: image.id, image: image.media };
+    });
+
+    res.status(200).json({ images });
   } catch (err) {
     next(err);
   }
