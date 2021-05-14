@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
       },
       gender: {
         type: DataTypes.ENUM,
@@ -15,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       dob: {
         type: DataTypes.DATEONLY,

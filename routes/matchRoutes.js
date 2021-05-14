@@ -4,9 +4,17 @@ const accountController = require("../controllers/accountController");
 
 const router = express.Router();
 
-router.get("/",
+router.get(
+  "/",
   // accountController.protect,
-matchController.getMatches);
+  matchController.getMatches
+);
+
+router.get(
+  "/likedby",
+  // accountController.protect,
+  matchController.getLikedBy
+);
 
 router.post(
   "/",
@@ -26,9 +34,10 @@ router.patch(
   matchController.returnLike
 );
 
-router.delete("/",
+router.delete(
+  "/",
   // accountController.protect,
-  matchController.unmatch);
-
+  matchController.unmatch
+);
 
 module.exports = router;
