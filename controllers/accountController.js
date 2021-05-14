@@ -195,7 +195,7 @@ exports.generateStack = async (req, res, next) => {
 
     const stack = await raw
       ?.map((acc) => {
-        return {
+        if(acc.likedMe.seen === false || acc.likedMe === false) return {
           firstName: acc.firstName,
           gender: acc.gender,
           email: acc.email,
@@ -234,13 +234,26 @@ exports.generateStack = async (req, res, next) => {
               : false,
         };
       })
-      .filter((acc) => acc.likedMe.seen === false || acc.likedMe === false);
 
+//TODO SORT STACK BY FIELDS IN DISCOVERY 
+    
+    
     res.status(200).json({ stack });
   } catch (err) {
     next(err);
   }
 };
+
+
+
+
+
+
+
+
+
+
+
 
 //––––––––––––––––––––––––––
 
