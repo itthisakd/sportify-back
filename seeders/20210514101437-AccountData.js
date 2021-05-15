@@ -1,6 +1,5 @@
 "use strict";
 
-const { lorem } = require("faker");
 const faker = require("faker");
 
 module.exports = {
@@ -9,20 +8,42 @@ module.exports = {
     let amount = 50;
 
     while (amount--) {
+      function randomGender(length) {
+        var result = [];
+        var characters = "mf";
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+          result.push(
+            characters.charAt(Math.floor(Math.random() * charactersLength))
+          );
+        }
+        return result.join("");
+      }
+
       let date = new Date();
       let N = 40;
+      let firstName = faker.name.firstName();
       data.push({
+        first_name: firstName,
+        gender: randomGender(1),
         email: faker.internet.email(),
-        first_name: faker.name.firstName(),
         dob: faker.date.past(N, new Date()),
-        date_of_birth: faker.date.past(N, new Date()),
-        about_me:
-          "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni, commodi cupiditate laboriosam in minima repellat? Perspiciatis ipsum accusamus nostrum animi?",
+        about_me: "I am very nice and easy going so let be friend :)",
+        instagram: "@" + firstName,
+        spotify: "",
+        job: faker.name.jobTitle(),
+        school: "",
         current_location: "Mint Tower",
+        last_active: faker.date.recent(),
         search_location: "Bangkok",
-        instagram: "@" + faker.name.firstName(),
+        search_age: "any",
+        search_gender: randomGender(1),
+        search_distance: Math.floor(Math.random() * 80),
+        show_in_stack: Math.floor(Math.random() * 2),
+        show_active: Math.floor(Math.random() * 2),
         created_at: date,
         updated_at: date,
+        plan_id: Math.floor(Math.random() * 3),
       });
     }
 
