@@ -1,43 +1,20 @@
 const express = require("express");
 const matchController = require("../controllers/matchController");
 const accountController = require("../controllers/accountController");
+const authController = require("../controllers/authController");
 
 const router = express.Router();
 
-router.get(
-  "/",
-  // accountController.protect,
-  matchController.getMatches
-);
+router.get("/", authController.protect, matchController.getMatches);
 
-router.get(
-  "/likedby",
-  // accountController.protect,
-  matchController.getLikedBy
-);
+router.get("/likedby", authController.protect, matchController.getLikedBy);
 
-router.post(
-  "/",
-  // accountController.protect,
-  matchController.createMatch
-);
+router.post("/", authController.protect, matchController.createMatch);
 
-router.patch(
-  "/seen",
-  // accountController.protect,
-  matchController.seen
-);
+router.patch("/seen", authController.protect, matchController.seen);
 
-router.patch(
-  "/returnlike",
-  // accountController.protect,
-  matchController.returnLike
-);
+router.patch("/returnlike", authController.protect, matchController.returnLike);
 
-router.delete(
-  "/",
-  // accountController.protect,
-  matchController.unmatch
-);
+router.delete("/", authController.protect, matchController.unmatch);
 
 module.exports = router;

@@ -11,8 +11,7 @@ const upload = util.promisify(cloudinary.uploader.upload);
 
 exports.addPhoto = async (req, res, next) => {
   try {
-    // const { userId } = req.user;
-    const userId = 1;
+    const { userId } = req.user;
     console.log("req.file :>> ", req.file);
 
     
@@ -47,8 +46,7 @@ exports.removePhoto = async (req, res, next) => {
 
 exports.getPhotos = async (req, res, next) => {
   try {
-    // const userId = req.user.userId;
-    const userId = 1;
+    const userId = req.user.userId;
 
     const raw = await Media.findAll({
       where: { accountId: userId },

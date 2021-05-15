@@ -19,12 +19,14 @@ exports.protect = async (req, res, next) => {
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
-    )
+    ) {
       token = req.headers.authorization.split(" ")[1];
+    }
 
     if (!token)
       return res.status(401).json({ message: "ํYou are unauthorized" });
 
+    
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -32,12 +34,12 @@ exports.protect = async (req, res, next) => {
     const payload = ticket.getPayload();
 
     const user = await Account.findOne({
-      attributes: [["id", "userId"]],
+      attributes: [["id", "userId"], "email"],
       where: { email: payload.email },
     });
 
-    if (!user) return res.status(400).json({ message: "User not found" });
-    req.user = account;
+    if (!user.dataValues) return res.status(400).json({ message: "User not found" });
+    req.user = user.dataValues;
     next();
   } catch (err) {
     next(err);
@@ -47,35 +49,31 @@ exports.protect = async (req, res, next) => {
 exports.googleLogin = async (req, res, next) => {
   try {
     const { tokenId } = req.body;
-    const response = await client.verifyIdToken({
+    const ticket = await client.verifyIdToken({
       idToken: tokenId,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-    return res.status(200).json({ response });
-  } catch (err) {
-    next(err);
-  }
-};
 
-exports.googleProtect = async (req, res, next) => {
-  try {
-    const { tokenId } = req.body;
-
-    const ticket = await client.verifyIdToken({
-      tokenId: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
     const payload = ticket.getPayload();
-    console.log(payload);
 
     const user = await Account.findOne({
       attributes: [["id", "userId"]],
-      where: { id: payload.id },
+      where: { email: payload.email },
     });
 
-    if (user === {}) return res.status(400).json({ message: "User not found" });
-    req.user = user;
-    next();
+    if (!user) {
+      return res.status(200).json({
+        registered: false,
+        message: "You do not have an account. Please register.",
+      });
+    } else if (user.dataValues.userId) {
+      req.user = { userId: user.dataValues.userId, token: tokenId };
+      return res.status(200).json({
+        registered: true,
+        message: "Login successfully",
+        userId: user.dataValues.userId,
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -83,7 +81,33 @@ exports.googleProtect = async (req, res, next) => {
 
 exports.register = async (req, res, next) => {
   try {
-    const { firstName, dob, gender, addSports, email } = req.body;
+    let token = null;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token)
+      return res.status(401).json({ message: "ํYou are unauthorized" });
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+
+    const {
+      firstName,
+      dob,
+      gender,
+      addSports,
+      searchLocation,
+      currentLocation,
+    } = req.body;
+
 
     const user = await Account.create({
       firstName,
@@ -96,15 +120,18 @@ exports.register = async (req, res, next) => {
       lastActive: DateTime.now().toString(),
     });
 
-    if (addSports.length > 0) {
-      const addArr = add.map((id) => {
-        return { accountId: userId, sportId: id };
-      });
-      await SportBelongsTo.bulkCreate(addArr);
-    }
+    const addArr = addSports?.map((id) => {
+      return { accountId: user.id, sportId: id };
+    });
 
-    const payload = { id: user.id };
-    const tokenId = 1;
+    if (addArr.length === 1) {
+    await SportBelongsTo.create(addArr[0]);
+      
+    } else {
+    await SportBelongsTo.bulkCreate(addArr);
+
+    }
+    return res.status(200).json({ user });
   } catch (err) {
     next(err);
   }
