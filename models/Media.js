@@ -1,17 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
-  const Media = sequelize.define("Media", {
-    accountId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+  const Media = sequelize.define(
+    "Media",
+    {
+      media: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
-
-    Media: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-  });
-
-  // REVIEW -- ON DELETE AND ON UPDATE SHOULD BE CASCADE ?? as every account has a media plan so if user delete their account then the media plan should be remove from our database as well ??
+    {
+      underscored: true,
+    }
+  );
 
   Media.associate = (models) => {
     Media.belongsTo(models.Account, {
@@ -19,8 +18,6 @@ module.exports = (sequelize, DataTypes) => {
         name: "accountId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
 

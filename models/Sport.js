@@ -10,17 +10,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       underscored: true,
+      timestamps: false,
     }
   );
 
   Sport.associate = (models) => {
-    Sport.belongsTo(models.SportBelongsTo, {
+    Sport.hasMany(models.SportBelongsTo, {
       foreignKey: {
         name: "sportId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
   return Sport;

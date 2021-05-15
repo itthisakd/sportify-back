@@ -10,17 +10,20 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      superLike: {
-        type: DataTypes.INTEGER,
+      superlike: {
+        type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 0,
       },
       likeReturned: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: 0,
       },
-      unmatched: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
+      seen: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: 0,
       },
     },
     {
@@ -36,22 +39,16 @@ module.exports = (sequelize, DataTypes) => {
         name: "fromId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
-  };
-
-  Match.associate = (models) => {
     Match.belongsTo(models.Account, {
       as: "MatchTo",
       foreignKey: {
         name: "toId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
+
 
   return Match;
 };

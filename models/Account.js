@@ -2,39 +2,37 @@ module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define(
     "Account",
     {
-      planId: {
-        type: DataTypes.ENUM,
-        values: ["BASIC", "SEMI-PRO", "PRO"],
-        allowNull: false,
-      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        // validate: {},
       },
       gender: {
         type: DataTypes.ENUM,
-        values: ["MALE", "FEMALE"],
+        values: ["m", "f"],
         allowNull: false,
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
-      dateOfBirth: {
-        type: DataTypes.DATE,
+      dob: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       aboutMe: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       instagram: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      occupation: {
+      spotify: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      job: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -44,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       currentLocation: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastActive: {
         type: DataTypes.DATE,
@@ -52,88 +50,76 @@ module.exports = (sequelize, DataTypes) => {
       },
       searchLocation: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       searchAge: {
         type: DataTypes.STRING,
         allowNull: true,
+        defaultValue: "18-39",
       },
-      searchGendeer: {
+      searchGender: {
         type: DataTypes.ENUM,
-        values: ["MALE", "FEMALE"],
+        values: ["m", "f", "a"],
+        defaultValue: "a",
       },
       searchDistance: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 80,
       },
       showInStack: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 1,
       },
       showActive: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 1,
+      },
+      deactivated: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: 0,
       },
     },
     {
       underscored: true,
     }
   );
+
   Account.associate = (models) => {
-    Account.hasOne(models.SportBelongsTo, {
+    Account.hasMany(models.SportBelongsTo, {
       foreignKey: {
         name: "accountId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTIRCT",
     });
-  };
-
-  Account.associate = (models) => {
     Account.hasMany(models.Media, {
       foreignKey: {
         name: "accountId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
-  };
-
-  // REVIEW -- CASCADE for onDelete and onUpdate ??
-  Account.associate = (models) => {
-    Account.hasOne(models.Plans, {
+    Account.belongsTo(models.Plans, {
       foreignKey: {
         name: "planId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
-  };
-
-  Account.associate = (models) => {
-    Account.hasOne(models.Match, {
+    Account.hasMany(models.Match, {
       as: "MatchFrom",
       foreignKey: {
         name: "fromId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
-  };
-
-  Account.associate = (models) => {
-    Account.hasOne(models.Match, {
+    Account.hasMany(models.Match, {
       as: "MatchTo",
       foreignKey: {
         name: "toId",
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
     });
   };
 
