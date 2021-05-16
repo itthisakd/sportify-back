@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 exports.getSports = async (req, res, next) => {
   try {
     const sports = await Sport.findAll({
+      attributes: [["id", "sportId"], "sportName"],
       order: [["id", "ASC"]],
     });
     res.status(200).json({ sports });
@@ -12,11 +13,24 @@ exports.getSports = async (req, res, next) => {
   }
 };
 
+exports.getUserSports = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const sports = await SportBelongsTo.findAll({
+      attributes: ["sportId"],
+      order: [["id", "ASC"]],
+      where: { accountId: userId },
+    });
+    res.status(200).json({ sports: sports.map((sport) => sport.sportId) });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.editUserSports = async (req, res, next) => {
   try {
     const { addSports: add, removeSports: remove } = req.body;
-    // const { userId } = req.user;
-    const userId = 1;
+    const { userId } = req.user;
 
     if (add.length > 0) {
       const addArr = add.map((id) => {
@@ -26,14 +40,11 @@ exports.editUserSports = async (req, res, next) => {
     }
 
     if (remove.length > 0) {
-      const removeArr = remove.map((id) => {
-        return { accountId: userId, sportId: id };
-      });
       await SportBelongsTo.destroy({
         where: {
           accountId: userId,
           sportId: {
-            [Op.in]: removeArr,
+            [Op.in]: remove,
           },
         },
       });

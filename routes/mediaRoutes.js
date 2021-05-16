@@ -2,29 +2,21 @@ const express = require("express");
 const mediaController = require("../controllers/mediaController");
 const accountController = require("../controllers/accountController");
 const { upload } = require("../middlewares/upload");
-const {protect} = require("../controllers/authController");
+const authController = require("../controllers/authController");
 
 const router = express.Router();
 
 router.post(
   "/",
-  // accountController.protect,
   upload.single("image"),
+  authController.protect,
   mediaController.addPhoto
 );
 
 
-router.get(
-  "/",
-  protect,
-  mediaController.getPhotos
-);
+router.get("/", authController.protect, mediaController.getPhotos);
 
 
-router.delete(
-  "/:id",
-  // accountController.protect,
-  mediaController.removePhoto
-);
+router.delete("/:id", authController.protect, mediaController.removePhoto);
 
 module.exports = router;

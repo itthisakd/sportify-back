@@ -1,4 +1,5 @@
-// const { calcDistance } = require("../utilities/calcDistance");
+const { calcDistance } = require("../utilities/calcDistance.js");
+const { shuffle } = require("../utilities/shuffle.js");
 const {
   Account,
   Plans,
@@ -12,8 +13,7 @@ const { DateTime } = require("luxon");
 
 exports.myAccount = async (req, res, next) => {
   try {
-    // const { userId } = req.user;
-    const userId = 1;
+    const { userId } = req.user;
 
     const raw = await Account.findOne({
       include: [
@@ -31,7 +31,7 @@ exports.myAccount = async (req, res, next) => {
       where: { id: userId },
     });
 
-    const stack = {
+    const account = {
       firstName: raw.firstName,
       gender: raw.gender,
       email: raw.email,
@@ -69,7 +69,7 @@ exports.myAccount = async (req, res, next) => {
           : 0,
     };
 
-    res.status(200).json({ ...stack });
+    res.status(200).json({ ...account });
   } catch (err) {
     next(err);
   }
@@ -77,10 +77,9 @@ exports.myAccount = async (req, res, next) => {
 
 exports.accountById = async (req, res, next) => {
   try {
-    // const userId = req.params.id;
-    const userId = 1;
+    const userId = req.params.id;
 
-    const raw = await Account.findAll({
+    const acc = await Account.findOne({
       include: [
         {
           model: SportBelongsTo,
@@ -93,49 +92,48 @@ exports.accountById = async (req, res, next) => {
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
       ],
+      where: { id: userId },
     });
 
-    const stack = await raw?.map((acc) => {
-      return {
-        firstName: acc.firstName,
-        gender: acc.gender,
-        email: acc.email,
-        dob: acc.dob,
-        aboutMe: acc.aboutMe,
-        spotify: acc.spotify,
-        instagram: acc.instagram,
-        job: acc.job,
-        school: acc.school,
-        currentLocation: acc.currentLocation,
-        lastActive: acc.lastActive,
-        searchLocation: acc.searchLocation,
-        searchAge: acc.searchAge,
-        searchGender: acc.searchGender,
-        searchDistance: acc.searchDistance,
-        showInStack: acc.showInStack,
-        showActive: acc.showActive,
-        deactivated: acc.deactivated,
-        sports: acc.SportBelongsTos.map((sport) => {
-          return {
-            sportId: sport.sportId,
-            sportName: sport.Sport.sportName,
-          };
-        }),
-        planId: acc.Plan.id,
-        planName: acc.Plan.planName,
-        images: acc.Media,
-        age: Math.floor(
-          DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
-        ),
-        recentlyActive:
-          DateTime.now().diff(DateTime.fromISO(acc.lastActive), "hours")
-            .hours <= 24
-            ? 1
-            : 0,
-      };
-    });
+    const account = {
+      firstName: acc.firstName,
+      gender: acc.gender,
+      email: acc.email,
+      dob: acc.dob,
+      aboutMe: acc.aboutMe,
+      spotify: acc.spotify,
+      instagram: acc.instagram,
+      job: acc.job,
+      school: acc.school,
+      currentLocation: acc.currentLocation,
+      lastActive: acc.lastActive,
+      searchLocation: acc.searchLocation,
+      searchAge: acc.searchAge,
+      searchGender: acc.searchGender,
+      searchDistance: acc.searchDistance,
+      showInStack: acc.showInStack,
+      showActive: acc.showActive,
+      deactivated: acc.deactivated,
+      sports: acc.SportBelongsTos.map((sport) => {
+        return {
+          sportId: sport.sportId,
+          sportName: sport.Sport.sportName,
+        };
+      }),
+      planId: acc.Plan.id,
+      planName: acc.Plan.planName,
+      images: acc.Media,
+      age: Math.floor(
+        DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
+      ),
+      recentlyActive:
+        DateTime.now().diff(DateTime.fromISO(acc.lastActive), "hours").hours <=
+        24
+          ? 1
+          : 0,
+    };
 
-    res.status(200).json({ stack });
+    res.status(200).json({ account });
   } catch (err) {
     next(err);
   }
@@ -143,8 +141,49 @@ exports.accountById = async (req, res, next) => {
 
 exports.generateStack = async (req, res, next) => {
   try {
-    // const { id: userId } = req.params;
-    const userId = 1;
+    const { userId } = req.user;
+
+    const rawMe = await Account.findOne({
+      where: { id: userId },
+    });
+
+    const me = {
+      firstName: rawMe.firstName,
+      gender: rawMe.gender,
+      email: rawMe.email,
+      dob: rawMe.dob,
+      aboutMe: rawMe.aboutMe,
+      spotify: rawMe.spotify,
+      instagram: rawMe.instagram,
+      job: rawMe.job,
+      school: rawMe.school,
+      currentLocation: rawMe.currentLocation,
+      lastActive: rawMe.lastActive,
+      searchLocation: rawMe.searchLocation,
+      searchAge: rawMe.searchAge,
+      searchGender: rawMe.searchGender,
+      searchDistance: rawMe.searchDistance,
+      showInStack: rawMe.showInStack,
+      showActive: rawMe.showActive,
+      deactivated: rawMe.deactivated,
+      sports: rawMe.SportBelongsTos.map((sport) => {
+        return {
+          sportId: sport.sportId,
+          sportName: sport.Sport.sportName,
+        };
+      }),
+      planId: rawMe.Plan.id,
+      planName: rawMe.Plan.planName,
+      images: rawMe.Media,
+      age: Math.floor(
+        DateTime.now().diff(DateTime.fromISO(rawMe.dob), "years").years
+      ),
+      recentlyActive:
+        DateTime.now().diff(DateTime.fromISO(rawMe.lastActive), "hours").hours <=
+        24
+          ? 1
+          : 0,
+    };
 
     const raw = await Account.findAll({
       include: [
@@ -163,11 +202,21 @@ exports.generateStack = async (req, res, next) => {
           as: "MatchTo",
         },
       ],
+      where: {
+        id: { [Op.not]: userId },
+
+        // searchAge: , // filter in secondary stage
+        searchGender: {
+          [Op.in]: [me.gender, "mf"],
+        },
+        searchDistance: { [Op.gte]: calcDistance(me.currentLocation) },
+        showInStack: true,
+      },
     });
 
-    const stack = await raw
-      ?.map((acc) => {
-        if(acc.likedMe.seen === false || acc.likedMe === false) return {
+    const stack = await raw.map((acc) => {
+      if (acc.MatchTo[0]?.seen === false || acc.MatchTo[0]?.id === false)
+        return {
           firstName: acc.firstName,
           gender: acc.gender,
           email: acc.email,
@@ -192,6 +241,9 @@ exports.generateStack = async (req, res, next) => {
               sportName: sport.Sport.sportName,
             };
           }),
+          age: Math.floor(
+            DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
+          ),
           planId: acc.Plan.id,
           planName: acc.Plan.planName,
           images: acc.Media,
@@ -205,153 +257,70 @@ exports.generateStack = async (req, res, next) => {
                 }
               : false,
         };
-      })
+    });
 
-//TODO SORT STACK BY FIELDS IN DISCOVERY 
-    
-    
+    const filteredStack = stack.filter((acc) => {
+      acc.showInStack === true &&
+        acc.searchGender.includes(me.gender) &&
+        me.searchGender.includes(acc.gender) &&
+        me.age >= acc.searchAge.split("-")[0] &&
+        me.age <= acc.searchAge.split("-")[1] &&
+        acc.age >= me.searchAge.split("-")[0] &&
+        acc.age <= me.searchAge.split("-")[1] &&
+        calcDistance(acc.currentLocation) <= me.searchDistance &&
+        calcDistance(me.currentLocation) <= acc.searchDistance;
+    });
+
+    const shuffledStack = [
+      ...filteredStack.filter((acc) => acc.likedMe),
+      ...shuffle(filteredStack.filter((acc) => acc.likedMe === false)),
+    ];
+
+    //TODO SORT STACK BY FIELDS IN DISCOVERY
+
     res.status(200).json({ stack });
   } catch (err) {
     next(err);
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-//––––––––––––––––––––––––––
-
-// exports.register = async (req, res, next) => {
-//   try {
-//     const {
-//       planId,
-//       firstName,
-//       password,
-//       confirmPassword,
-//       gender,
-//       email,
-//       dateOfBirth,
-//       aboutMe,
-//       instagram,
-//       job,
-//       company,
-//       school,
-//       searchLocation,
-//       currentLocation,
-//       lastActive,
-//     } = req.body;
-//     if (password !== confirmPassword)
-//       return res
-//         .status(400)
-//         .json({ message: "password and confirm password doesnt match" });
-//     if (gender !== "m" || "f")
-//       return res.status(400).json({ message: "please selecet your gender" });
-//     if (email === " ")
-//       return res.status(400).json({ message: "please fill your email" });
-//     if (dateOfBirth === " ")
-//       return res
-//         .status(400)
-//         .json({ message: "please fill your date of birth" });
-//     if (aboutMe === " ")
-//       return res
-//         .status(400)
-//         .json({ message: "please explain a bit about yourself " });
-//     if (searchLocation === " ")
-//       return res.stauts(400).json({ message: "please enter search location" });
-//     if (currentLocation === " ")
-//       return res
-//         .status(400)
-//         .json({ message: "please enter your current location " });
-
-//     const hashedPassword = await bcrypt.hash(
-//       password,
-//       +process.env.BCRYPT_SALT
-//     );
-//     const account = await Account.create({
-//       firstName,
-//       password: hashedPassword,
-//     });
-
-//     const payload = { id: account.id, firstName };
-//     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-//       expiresIn: +process.env.JWT_EXPIRES_IN,
-//     });
-//     res.status(201).json({ token });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
-// FIXME login by google account
-
-// exports.login = async (req, res, next) => {
-//   try {
-//     const { email, password } = req.body;
-//     const account = await Account.findOne({
-//       where: { firstName } || { email },
-//     });
-//     if (!email)
-//       return res
-//         .status(400)
-//         .json({ meessage: "Login name or password is incorrect" });
-
-//     const isMatch = await bcrypt.compare(password, account.password);
-//     if (!isMatch)
-//       return res
-//         .status(400)
-//         .json({ message: "Login name or password is incorrect " });
-//     const payload = { id: account.id, firstName: account.firstName };
-//     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-//       expiresIn: +process.env.JWT_EXPIRES_IN,
-//     });
-//     res.status(200).json({ token });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
-exports.updateAccount = async (req, res, next) => {
+exports.currentLocation = async (req, res, next) => {
   try {
-    const {
-      planId,
-      firstName,
-      password,
-      gender,
-      email,
-      aboutMe,
-      instagram,
-      job,
-      company,
-      school,
-      searchLocation,
-      currentLocation,
-    } = req.body;
-    await Account.update(
-      {
-        planId,
-        firstName,
-        password,
-        gender,
-        email,
-        aboutMe,
-        instagram,
-        job,
-        company,
-        school,
-        searchLocation,
-        currentLocation,
-      },
-      { where: { id: req.account.id } }
-    );
-    res.status(200).json({ message: "Update account successfully" });
+    const { currentLocation, addSearchLo } = req.body;
+    console.log(req.body);
+    const userId = req.user.userId;
+    console.log(userId);
+
+    if (addSearchLo) {
+      await Account.update(
+        {
+          currentLocation: currentLocation,
+          searchLocation: currentLocation,
+        },
+        { where: { id: userId } }
+      );
+    } else {
+      await Account.update({ currentLocation }, { where: { id: userId } });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Updated current location successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.editMyAccount = async (req, res, next) => {
+  try {
+    const body = req.body;
+    const userId = req.user.userId;
+
+    console.log(body);
+
+    await Account.update(body, { where: { id: userId } });
+
+    return res.status(200).json({ message: "Updated account successfully!" });
   } catch (err) {
     next(err);
   }

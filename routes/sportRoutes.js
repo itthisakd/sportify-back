@@ -1,19 +1,20 @@
 const express = require("express");
 const sportController = require("../controllers/sportController");
 const accountController = require("../controllers/accountController");
+const authController = require("../controllers/authController")
 
 const router = express.Router();
 
 router.get(
   "/",
-  // accountController.protect,
+  authController.protect,
   sportController.getSports
 );
 
-router.post(
-  "/",
-  // accountController.protect,
-  sportController.editUserSports
-);
+router.get("/user", authController.protect, sportController.getUserSports);
+
+router.post("/", authController.protect, sportController.editUserSports);
+
+
 
 module.exports = router;

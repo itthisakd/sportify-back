@@ -11,4 +11,4 @@ function calcDistance(myLocation, yourLocation) {
   return distance;
 }
 
-exports.calcDistance = calcDistance;
+module.exports = {calcDistance}

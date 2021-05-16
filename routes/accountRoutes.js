@@ -1,30 +1,21 @@
 const express = require("express");
+const authController = require("../controllers/authController");
 const accountController = require("../controllers/accountController");
 
 const router = express.Router();
 
-// router.post("/", accountController.register);
-// router.post("/", accountController.login);
-
 router.get(
   "/myaccount",
-  // accountController.protect,
+  authController.protect,
   accountController.myAccount
 );
 
-router.get(
-  "/stack",
-  // accountController.protect,
-  accountController.generateStack
-);
+router.patch("/myaccount", authController.protect, accountController.editMyAccount);
 
-router.get(
-  "/:id",
-  // accountController.protect,
-  accountController.accountById
-);
+router.get("/stack", authController.protect, accountController.generateStack);
 
+router.get("/:id", authController.protect, accountController.accountById);
 
-// router.put("/", accountController.protect, accountController.updateAccount);
+router.patch("/currentlocation", authController.protect, accountController.currentLocation);
 
 module.exports = router;
