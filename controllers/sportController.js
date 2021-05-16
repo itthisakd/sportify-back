@@ -15,10 +15,13 @@ exports.getSports = async (req, res, next) => {
 
 exports.getUserSports = async (req, res, next) => {
   try {
-    const sports = await Sport.findAll({
+    const userId = req.user.userId;
+    const sports = await SportBelongsTo.findAll({
+      attributes: ["sportId"],
       order: [["id", "ASC"]],
+      where: { accountId: userId },
     });
-    res.status(200).json({ sports });
+    res.status(200).json({ sports: sports.map((sport) => sport.sportId) });
   } catch (err) {
     next(err);
   }
@@ -37,14 +40,11 @@ exports.editUserSports = async (req, res, next) => {
     }
 
     if (remove.length > 0) {
-      const removeArr = remove.map((id) => {
-        return { accountId: userId, sportId: id };
-      });
       await SportBelongsTo.destroy({
         where: {
           accountId: userId,
           sportId: {
-            [Op.in]: removeArr,
+            [Op.in]: remove,
           },
         },
       });

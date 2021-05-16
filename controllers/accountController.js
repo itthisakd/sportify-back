@@ -1,4 +1,5 @@
-// const { calcDistance } = require("../utilities/calcDistance");
+const { calcDistance } = require("../utilities/calcDistance.js");
+const { shuffle } = require("../utilities/shuffle.js");
 const {
   Account,
   Plans,
@@ -30,7 +31,7 @@ exports.myAccount = async (req, res, next) => {
       where: { id: userId },
     });
 
-    const stack = {
+    const account = {
       firstName: raw.firstName,
       gender: raw.gender,
       email: raw.email,
@@ -68,7 +69,7 @@ exports.myAccount = async (req, res, next) => {
           : 0,
     };
 
-    res.status(200).json({ ...stack });
+    res.status(200).json({ ...account });
   } catch (err) {
     next(err);
   }
@@ -140,7 +141,49 @@ exports.accountById = async (req, res, next) => {
 
 exports.generateStack = async (req, res, next) => {
   try {
-    const { id: userId } = req.params;
+    const { userId } = req.user;
+
+    const rawMe = await Account.findOne({
+      where: { id: userId },
+    });
+
+    const me = {
+      firstName: rawMe.firstName,
+      gender: rawMe.gender,
+      email: rawMe.email,
+      dob: rawMe.dob,
+      aboutMe: rawMe.aboutMe,
+      spotify: rawMe.spotify,
+      instagram: rawMe.instagram,
+      job: rawMe.job,
+      school: rawMe.school,
+      currentLocation: rawMe.currentLocation,
+      lastActive: rawMe.lastActive,
+      searchLocation: rawMe.searchLocation,
+      searchAge: rawMe.searchAge,
+      searchGender: rawMe.searchGender,
+      searchDistance: rawMe.searchDistance,
+      showInStack: rawMe.showInStack,
+      showActive: rawMe.showActive,
+      deactivated: rawMe.deactivated,
+      sports: rawMe.SportBelongsTos.map((sport) => {
+        return {
+          sportId: sport.sportId,
+          sportName: sport.Sport.sportName,
+        };
+      }),
+      planId: rawMe.Plan.id,
+      planName: rawMe.Plan.planName,
+      images: rawMe.Media,
+      age: Math.floor(
+        DateTime.now().diff(DateTime.fromISO(rawMe.dob), "years").years
+      ),
+      recentlyActive:
+        DateTime.now().diff(DateTime.fromISO(rawMe.lastActive), "hours").hours <=
+        24
+          ? 1
+          : 0,
+    };
 
     const raw = await Account.findAll({
       include: [
@@ -159,11 +202,20 @@ exports.generateStack = async (req, res, next) => {
           as: "MatchTo",
         },
       ],
-      where: { [Op.not]: { id: userId } },
+      where: {
+        id: { [Op.not]: userId },
+
+        // searchAge: , // filter in secondary stage
+        searchGender: {
+          [Op.in]: [me.gender, "mf"],
+        },
+        searchDistance: { [Op.gte]: calcDistance(me.currentLocation) },
+        showInStack: true,
+      },
     });
 
-    const stack = await raw?.map((acc) => {
-      if (acc.likedMe.seen === false || acc.likedMe === false)
+    const stack = await raw.map((acc) => {
+      if (acc.MatchTo[0]?.seen === false || acc.MatchTo[0]?.id === false)
         return {
           firstName: acc.firstName,
           gender: acc.gender,
@@ -189,6 +241,9 @@ exports.generateStack = async (req, res, next) => {
               sportName: sport.Sport.sportName,
             };
           }),
+          age: Math.floor(
+            DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
+          ),
           planId: acc.Plan.id,
           planName: acc.Plan.planName,
           images: acc.Media,
@@ -203,6 +258,23 @@ exports.generateStack = async (req, res, next) => {
               : false,
         };
     });
+
+    const filteredStack = stack.filter((acc) => {
+      acc.showInStack === true &&
+        acc.searchGender.includes(me.gender) &&
+        me.searchGender.includes(acc.gender) &&
+        me.age >= acc.searchAge.split("-")[0] &&
+        me.age <= acc.searchAge.split("-")[1] &&
+        acc.age >= me.searchAge.split("-")[0] &&
+        acc.age <= me.searchAge.split("-")[1] &&
+        calcDistance(acc.currentLocation) <= me.searchDistance &&
+        calcDistance(me.currentLocation) <= acc.searchDistance;
+    });
+
+    const shuffledStack = [
+      ...filteredStack.filter((acc) => acc.likedMe),
+      ...shuffle(filteredStack.filter((acc) => acc.likedMe === false)),
+    ];
 
     //TODO SORT STACK BY FIELDS IN DISCOVERY
 
@@ -234,6 +306,21 @@ exports.currentLocation = async (req, res, next) => {
     return res
       .status(200)
       .json({ message: "Updated current location successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.editMyAccount = async (req, res, next) => {
+  try {
+    const body = req.body;
+    const userId = req.user.userId;
+
+    console.log(body);
+
+    await Account.update(body, { where: { id: userId } });
+
+    return res.status(200).json({ message: "Updated account successfully!" });
   } catch (err) {
     next(err);
   }

@@ -10,14 +10,12 @@ router.get(
   accountController.myAccount
 );
 
+router.patch("/myaccount", authController.protect, accountController.editMyAccount);
+
 router.get("/stack", authController.protect, accountController.generateStack);
 
 router.get("/:id", authController.protect, accountController.accountById);
 
-router.post("/currentlocation", authController.protect, accountController.currentLocation);
-
-
-
-// router.put("/", accountController.protect, accountController.updateAccount);
+router.patch("/currentlocation", authController.protect, accountController.currentLocation);
 
 module.exports = router;
