@@ -77,6 +77,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: 1,
       },
+      offset: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: 0,
+      },
       deactivated: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
