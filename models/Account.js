@@ -59,8 +59,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       searchGender: {
         type: DataTypes.ENUM,
-        values: ["m", "f", "a"],
-        defaultValue: "a",
+        values: ["m", "f", "mf"],
+        defaultValue: "mf",
       },
       searchDistance: {
         type: DataTypes.INTEGER,
