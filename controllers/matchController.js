@@ -143,8 +143,9 @@ exports.getLikedBy = async (req, res, next) => {
         },
       ],
       where: {
+        //FIXME remove op.or
         [Op.and]: [
-          { [Op.or]: [{ fromId: userId }, { toId: userId }] },
+          { toId: userId },
           { likeReturned: false },
         ],
       },
