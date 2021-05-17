@@ -8,7 +8,7 @@ const sportRoutes = require("./routes/sportRoutes");
 const authRoutes = require("./routes/authRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 
-// const { sequelize } = require('./models');
+// const { sequelize } = require("./models");
 
 const app = express();
 
