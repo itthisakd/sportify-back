@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 //ANCHOR get
 exports.getMatches = async (req, res, next) => {
   try {
-    const userId = req.user.userId
+    const userId = req.user.userId;
     const raw = await Match.findAll({
       include: [
         {
@@ -69,13 +69,19 @@ exports.getMatches = async (req, res, next) => {
 //ANCHOR post
 exports.createMatch = async (req, res, next) => {
   try {
-    // const {userId} = req.user
-    const { fromId, toId, superlike } = req.body;
+    const { userId } = req.user;
+    const { toId, superlike } = req.body;
     await Match.create({
-      fromId,
+      fromId: userId,
       toId,
       superlike,
     });
+    await Account.update(
+      {
+        offset: toId
+      },
+      { where: { id: userId } }
+    );
     res.status(201).json({ message: "Match created successfully" });
   } catch (err) {
     next(err);
@@ -121,7 +127,7 @@ exports.unmatch = async (req, res, next) => {
 //ANCHOR get
 exports.getLikedBy = async (req, res, next) => {
   try {
-    const userId = req.user.userId
+    const userId = req.user.userId;
     const raw = await Match.findAll({
       include: [
         {

@@ -26,7 +26,6 @@ exports.protect = async (req, res, next) => {
     if (!token)
       return res.status(401).json({ message: "ํYou are unauthorized" });
 
-    
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -34,11 +33,12 @@ exports.protect = async (req, res, next) => {
     const payload = ticket.getPayload();
 
     const user = await Account.findOne({
-      attributes: [["id", "userId"], "email"],
+      attributes: [["id", "userId"], "email", "offset"],
       where: { email: payload.email },
     });
 
-    if (!user.dataValues) return res.status(400).json({ message: "User not found" });
+    if (!user?.dataValues)
+      return res.status(400).json({ message: "User not found" });
     req.user = user.dataValues;
     next();
   } catch (err) {
@@ -108,7 +108,6 @@ exports.register = async (req, res, next) => {
       currentLocation,
     } = req.body;
 
-
     const user = await Account.create({
       firstName,
       gender,
@@ -125,11 +124,9 @@ exports.register = async (req, res, next) => {
     });
 
     if (addArr.length === 1) {
-    await SportBelongsTo.create(addArr[0]);
-      
+      await SportBelongsTo.create(addArr[0]);
     } else {
-    await SportBelongsTo.bulkCreate(addArr);
-
+      await SportBelongsTo.bulkCreate(addArr);
     }
     return res.status(200).json({ user });
   } catch (err) {
