@@ -75,10 +75,11 @@ exports.createMatch = async (req, res, next) => {
       fromId: userId,
       toId,
       superlike,
+      seen: 0,
     });
     await Account.update(
       {
-        offset: toId
+        offset: toId,
       },
       { where: { id: userId } }
     );
@@ -91,9 +92,14 @@ exports.createMatch = async (req, res, next) => {
 //ANCHOR patch
 exports.returnLike = async (req, res, next) => {
   try {
-    const { matchId } = req.body;
+    const { matchId, toId } = req.body;
     await Match.update({ likeReturned: 1 }, { where: { id: matchId } });
-
+    await Account.update(
+      {
+        offset: toId,
+      },
+      { where: { id: userId } }
+    );
     res.status(200).json({ message: "updated successfully!!!!!" });
   } catch (err) {
     next(err);

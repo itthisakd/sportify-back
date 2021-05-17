@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       seen: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
       },
@@ -48,7 +48,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
   };
-
 
   return Match;
 };
