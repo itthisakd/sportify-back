@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
       searchDistance: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        defaultValue: 80,
+        defaultValue: 100,
       },
       showInStack: {
         type: DataTypes.BOOLEAN,
