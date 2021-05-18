@@ -2,7 +2,7 @@
 
 const faker = require("faker");
 
-//Sequelize db:seed --seed 20210515221645-PlansData.js
+// Sequelize db:seed --seed 20210515221645-PlansData.js
 // Sequelize db:seed --seed 20210514101437-AccountData
 // Sequelize db:seed --seed 20210517090948-SportData
 // Sequelize db:seed --seed 20210517153651-SportBelongsToData
@@ -11,7 +11,7 @@ const faker = require("faker");
 module.exports = {
   up: (queryInterface, Sequelize) => {
     let data = [];
-    let amount = 100;
+    let amount = 1000;
     const aboutMe = [
       "I am very nice and easy going person. Let's do it together",
       "Looking for a defender/forwarder in my football team :)",

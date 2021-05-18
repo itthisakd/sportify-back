@@ -144,11 +144,6 @@ exports.accountById = async (req, res, next) => {
 exports.generateStack = async (req, res, next) => {
   try {
     const { userId, offset } = req.user;
-    const idObjArr = await Account.findAll({ attributes: ["id"] });
-
-    const idArr = idObjArr.map((id) => id.id);
-    console.log(idArr);
-    const actualOffset = idArr.findIndex(1) + 1;
 
     const rawMe = await Account.findOne({
       where: { id: userId },
@@ -213,7 +208,7 @@ exports.generateStack = async (req, res, next) => {
       where: {
         id: { [Op.not]: userId },
       },
-      offset: +actualOffset,
+      offset: +offset,
       limit: 30,
     });
 
