@@ -1,5 +1,6 @@
 const { Account, Match, sequelize, Media } = require("../models");
 const { Op } = require("sequelize");
+const { DateTime } = require("luxon");
 
 //ANCHOR get
 exports.getMatches = async (req, res, next) => {
@@ -92,14 +93,9 @@ exports.createMatch = async (req, res, next) => {
 //ANCHOR patch
 exports.returnLike = async (req, res, next) => {
   try {
-    const { matchId, toId } = req.body;
+    const { matchId } = req.body;
+    const userId = req.user.userId;
     await Match.update({ likeReturned: 1 }, { where: { id: matchId } });
-    await Account.update(
-      {
-        offset: toId,
-      },
-      { where: { id: userId } }
-    );
     res.status(200).json({ message: "updated successfully!!!!!" });
   } catch (err) {
     next(err);
@@ -122,7 +118,7 @@ exports.seen = async (req, res, next) => {
 exports.unmatch = async (req, res, next) => {
   try {
     const { matchId } = req.body;
-    await Match.update({ where: { id: matchId } });
+    await Match.destroy({ where: { id: matchId } });
 
     res.status(204).json({ message: "deleted successfully!!!!!" });
   } catch (err) {
@@ -150,10 +146,7 @@ exports.getLikedBy = async (req, res, next) => {
       ],
       where: {
         //FIXME remove op.or
-        [Op.and]: [
-          { toId: userId },
-          { likeReturned: false },
-        ],
+        [Op.and]: [{ toId: userId }, { likeReturned: false }],
       },
     });
 
@@ -166,6 +159,10 @@ exports.getLikedBy = async (req, res, next) => {
         matchAcc: {
           id: match.MatchFrom.id,
           firstName: match.MatchFrom.firstName,
+          age: Math.floor(
+            DateTime.now().diff(DateTime.fromISO(match.MatchFrom.dob), "years")
+              .years
+          ),
           profilePhoto: match.MatchFrom.Media[0].media,
         },
       };
@@ -201,10 +198,7 @@ exports.getLikedByAccounts = async (req, res, next) => {
         },
       ],
       where: {
-        [Op.and]: [
-          { toId: userId },
-          { likeReturned: false },
-        ],
+        [Op.and]: [{ toId: userId }, { likeReturned: false }],
       },
     });
 

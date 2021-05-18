@@ -129,7 +129,7 @@ module.exports = {
         search_gender: ["m", "f", "mf"][Math.floor(Math.random() * 3)],
         search_distance: Math.floor(Math.random() * 40) + 100,
         show_in_stack: 1,
-        show_active: 1,
+        show_active: [0, 1][Math.floor(Math.random() * 2)],
         created_at: date,
         updated_at: date,
         plan_id: 1,
