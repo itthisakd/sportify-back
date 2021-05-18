@@ -176,3 +176,54 @@ exports.getLikedBy = async (req, res, next) => {
     next(err);
   }
 };
+
+//ANCHOR get
+exports.getLikedByAccounts = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    // const matches = await Match.findAll({
+
+    // })
+
+    const raw = await Match.findAll({
+      include: [
+        {
+          model: Account,
+          as: "MatchFrom",
+          include: {
+            model: Media,
+            order: [
+              [Media, "createdAt", "ASC"],
+              [Media, "id", "ASC"],
+            ],
+          },
+        },
+      ],
+      where: {
+        [Op.and]: [
+          { toId: userId },
+          { likeReturned: false },
+        ],
+      },
+    });
+
+    const matches = await raw.map((match) => {
+      return {
+        matchId: match.id,
+        fromId: match.fromId,
+        toId: match.toId,
+        matchedAt: match.updatedAt,
+        matchAcc: {
+          id: match.MatchFrom.id,
+          firstName: match.MatchFrom.firstName,
+          profilePhoto: match.MatchFrom.Media[0].media,
+        },
+      };
+    });
+
+    res.status(200).json(matches);
+  } catch (err) {
+    next(err);
+  }
+};

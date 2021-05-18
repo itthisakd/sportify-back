@@ -88,23 +88,28 @@ module.exports = {
     const accounts = await Account.findAll({ attributes: ["id", "gender"] });
     //[{id: 1, gender:"m"}, {id: 1, gender:"m"}, {id: 1, gender:"m"}, {id: 1, gender:"m"}]
 
-    let Fcounter = -1 % female.length;
-    let Mcounter = -1 % male.length;
+    let Fcounter = -1;
+    let Mcounter = -1;
+
+    console.log("f", female.length, "m", male.length);
 
     const data = accounts.map((acc) => {
       if (acc.gender === "m") {
         Mcounter++;
+        console.log(Mcounter);
+
         return {
           account_id: acc.id,
-          media: male[Mcounter],
+          media: male[Mcounter % male.length],
           created_at: new Date(),
           updated_at: new Date(),
         };
       } else {
         Fcounter++;
+        console.log(Fcounter);
         return {
           account_id: acc.id,
-          media: female[Fcounter],
+          media: female[Fcounter % female.length],
           created_at: new Date(),
           updated_at: new Date(),
         };

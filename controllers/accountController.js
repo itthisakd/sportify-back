@@ -32,6 +32,7 @@ exports.myAccount = async (req, res, next) => {
     });
 
     const account = {
+      id: raw.id,
       firstName: raw.firstName,
       gender: raw.gender,
       email: raw.email,
@@ -96,6 +97,7 @@ exports.accountById = async (req, res, next) => {
     });
 
     const account = {
+      id: acc.id,
       firstName: acc.firstName,
       gender: acc.gender,
       email: acc.email,
@@ -145,10 +147,15 @@ exports.generateStack = async (req, res, next) => {
 
     console.log(req.user);
 
+    const actualOffset =
+      (await Account.findAll({ attributes: ["id"] }).findIndex({
+        id: offset,
+      })) + 1;
     const rawMe = await Account.findOne({
       where: { id: userId },
     });
     const me = await {
+      id: rawMe.id,
       firstName: rawMe.firstName,
       gender: rawMe.gender,
       email: rawMe.email,
@@ -207,65 +214,70 @@ exports.generateStack = async (req, res, next) => {
       where: {
         id: { [Op.not]: userId },
       },
-      offset: +offset,
+      offset: +actualOffset,
       limit: 30,
     });
 
     const stack = await raw.map((acc) => {
-      if (acc.MatchTo[0]?.seen === false || acc.MatchTo[0]?.id === false)
-        return {
-          firstName: acc.firstName,
-          gender: acc.gender,
-          email: acc.email,
-          dob: acc.dob,
-          aboutMe: acc.aboutMe,
-          spotify: acc.spotify,
-          instagram: acc.instagram,
-          job: acc.job,
-          school: acc.school,
-          currentLocation: acc.currentLocation,
-          lastActive: acc.lastActive,
-          searchLocation: acc.searchLocation,
-          searchAge: acc.searchAge,
-          searchGender: acc.searchGender,
-          searchDistance: acc.searchDistance,
-          showInStack: acc.showInStack,
-          showActive: acc.showActive,
-          deactivated: acc.deactivated,
-          sports: acc.SportBelongsTos?.map((sport) => {
-            return {
-              sportId: sport.sportId,
-              sportName: sport.Sport.sportName,
-            };
-          }),
-          age: Math.floor(
-            DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
-          ),
-          planId: acc.Plan.id,
-          planName: acc.Plan.planName,
-          images: acc.Media,
-          likedMe:
-            acc.MatchTo.length > 0
-              ? {
-                  matchId: acc.MatchTo[0].id,
-                  matchFrom: acc.MatchTo[0].fromId,
-                  superlike: acc.MatchTo[0].superlike,
-                  seen: acc.MatchTo[0].seen,
-                }
-              : false,
-        };
+      return {
+        id: acc.id,
+
+        firstName: acc.firstName,
+        gender: acc.gender,
+        email: acc.email,
+        dob: acc.dob,
+        aboutMe: acc.aboutMe,
+        spotify: acc.spotify,
+        instagram: acc.instagram,
+        job: acc.job,
+        school: acc.school,
+        currentLocation: acc.currentLocation,
+        lastActive: acc.lastActive,
+        searchLocation: acc.searchLocation,
+        searchAge: acc.searchAge,
+        searchGender: acc.searchGender,
+        searchDistance: acc.searchDistance,
+        showInStack: acc.showInStack,
+        showActive: acc.showActive,
+        deactivated: acc.deactivated,
+        sports: acc.SportBelongsTos?.map((sport) => {
+          return {
+            sportId: sport.sportId,
+            sportName: sport.Sport.sportName,
+          };
+        }),
+        age: Math.floor(
+          DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
+        ),
+        planId: acc.Plan.id,
+        planName: acc.Plan.planName,
+        images: acc.Media,
+        likedMe:
+          acc.MatchTo.length > 0
+            ? {
+                matchId: acc.MatchTo[0].id,
+                matchFrom: acc.MatchTo[0].fromId,
+                superlike: acc.MatchTo[0].superlike,
+                seen: acc.MatchTo[0].seen,
+              }
+            : false,
+      };
     });
 
     const filteredStack = await stack?.filter((acc) => {
-      acc?.showInStack === true &&
+      return (
+        acc?.showInStack === true &&
         acc.searchGender.includes(me.gender) &&
         me.searchGender.includes(acc.gender) &&
-        me.age >= acc.searchAge.split("-")[0] &&
-        me.age <= acc.searchAge.split("-")[1] &&
-        acc.age >= me.searchAge.split("-")[0] &&
-        acc.age <= me.searchAge.split("-")[1] &&
-        calcDistance(acc.currentLocation) <= me.searchDistance &&
-        calcDistance(me.currentLocation) <= acc.searchDistance;
+        me.age >= acc.searchAge?.split("-")[0] &&
+        me.age <= acc.searchAge?.split("-")[1] &&
+        acc.age >= me.searchAge?.split("-")[0] &&
+        acc.age <= me.searchAge?.split("-")[1] &&
+        calcDistance(acc.currentLocation, me.currentLocation) <=
+          me.searchDistance &&
+        calcDistance(me.currentLocation, me.currentLocation) <=
+          acc.searchDistance
+      );
     });
 
     const shuffledStack = await [
@@ -273,7 +285,9 @@ exports.generateStack = async (req, res, next) => {
       ...shuffle(filteredStack?.filter((acc) => acc.likedMe === false)),
     ];
 
-    res.status(200).json({ stack: raw });
+    console.log(filteredStack);
+
+    res.status(200).json({ stack: filteredStack });
   } catch (err) {
     next(err);
   }

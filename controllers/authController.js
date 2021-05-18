@@ -33,7 +33,7 @@ exports.protect = async (req, res, next) => {
     const payload = ticket.getPayload();
 
     const user = await Account.findOne({
-      attributes: [["id", "userId"], "email", "offset"],
+      attributes: [["id", "userId"], "email", "offset", "currentLocation"],
       where: { email: payload.email },
     });
 

@@ -2,10 +2,16 @@
 
 const faker = require("faker");
 
+//Sequelize db:seed --seed 20210515221645-PlansData.js
+// Sequelize db:seed --seed 20210514101437-AccountData
+// Sequelize db:seed --seed 20210517090948-SportData
+// Sequelize db:seed --seed 20210517153651-SportBelongsToData
+// Sequelize db:seed --seed 20210517174052-MediaData
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     let data = [];
-    let amount = 50;
+    let amount = 100;
     const aboutMe = [
       "I am very nice and easy going person. Let's do it together",
       "Looking for a defender/forwarder in my football team :)",
@@ -15,6 +21,7 @@ module.exports = {
       "Jogging is very beneficial.",
       "No pain, no gain.",
       "Train insane or remain the same.",
+      "If you liked training, let's meet!",
     ];
 
     const school = [
@@ -72,11 +79,11 @@ module.exports = {
       data.push({
         first_name: firstName,
         gender: randomGender(1),
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
         dob: faker.date.between("1981-01-01", "2002-01-01"),
         about_me: aboutMe[Math.floor(Math.random() * aboutMe.length)],
-        instagram: firstName,
-        spotify: "",
+        instagram: firstName.toLowerCase(),
+        spotify: firstName.toLowerCase(),
         job: faker.name.jobTitle(),
         school: school[Math.floor(Math.random() * aboutMe.length)],
         current_location: "13.7453344001603,100.52897209337148",
@@ -86,7 +93,7 @@ module.exports = {
         search_gender: searchGender,
         search_distance: Math.floor(Math.random() * 40) + 40,
         show_in_stack: 1,
-        show_active: Math.floor(Math.random() * 2),
+        show_active: 1,
         created_at: date,
         updated_at: date,
         plan_id: 1,
