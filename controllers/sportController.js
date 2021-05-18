@@ -5,7 +5,7 @@ exports.getSports = async (req, res, next) => {
   try {
     const sports = await Sport.findAll({
       attributes: [["id", "sportId"], "sportName"],
-      order: [["id", "ASC"]],
+      order: [["sportName", "ASC"]],
     });
     res.status(200).json({ sports });
   } catch (err) {
