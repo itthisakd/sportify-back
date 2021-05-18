@@ -8,7 +8,7 @@ const sportRoutes = require("./routes/sportRoutes");
 const authRoutes = require("./routes/authRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 
-// const { sequelize } = require("./models");
+const { sequelize } = require("./models");
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use((req, res) => {
 
 app.use(errorMiddleware);
 
-// sequelize.sync({ force: false }).then(() => console.log("DB Sync"));
+// sequelize.sync({ alter: true }).then(() => console.log("DB Sync"));
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log(`Server is running on port ${port}`));
