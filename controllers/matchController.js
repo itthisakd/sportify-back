@@ -94,7 +94,6 @@ exports.createMatch = async (req, res, next) => {
 exports.returnLike = async (req, res, next) => {
   try {
     const { matchId } = req.body;
-    const userId = req.user.userId;
     await Match.update({ likeReturned: 1 }, { where: { id: matchId } });
     res.status(200).json({ message: "updated successfully!!!!!" });
   } catch (err) {
@@ -117,8 +116,10 @@ exports.seen = async (req, res, next) => {
 //ANCHOR delete
 exports.unmatch = async (req, res, next) => {
   try {
-    const { matchId } = req.body;
-    await Match.destroy({ where: { id: matchId } });
+    const { matchId } = req.params;
+    console.log("matchId",matchId);
+
+    await Match.destroy({ where: { id: +matchId } });
 
     res.status(204).json({ message: "deleted successfully!!!!!" });
   } catch (err) {
@@ -145,7 +146,6 @@ exports.getLikedBy = async (req, res, next) => {
         },
       ],
       where: {
-        //FIXME remove op.or
         [Op.and]: [{ toId: userId }, { likeReturned: false }],
       },
     });

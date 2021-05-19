@@ -78,8 +78,8 @@ exports.myAccount = async (req, res, next) => {
 
 exports.accountById = async (req, res, next) => {
   try {
-    const accId = req.params.id;
-    const userId = req.user.userId;
+    const accId = +req.params.id;
+    const userId = +req.user.userId;
 
     const me = await Account.findOne({
       include: [
@@ -96,6 +96,7 @@ exports.accountById = async (req, res, next) => {
         {
           model: Match,
           as: "MatchTo",
+          where: { [Op.and]: [{ toId: userId }, { fromId: accId }] },
         },
       ],
       where: { id: userId },
@@ -115,8 +116,7 @@ exports.accountById = async (req, res, next) => {
         { model: Media, attributes: ["id", ["media", "image"]] },
         {
           model: Match,
-          as: "MatchTo",
-          //FIXME cannot get matches
+          as: "MatchFrom",
           where: { [Op.and]: [{ toId: userId }, { fromId: accId }] },
         },
       ],
@@ -171,12 +171,12 @@ exports.accountById = async (req, res, next) => {
         }).includes(spt)
       ),
       likedMe:
-        raw.MatchTo.length > 0
+        raw.MatchFrom?.length > 0
           ? {
-              matchId: raw.MatchTo[0].id,
-              matchFrom: raw.MatchTo[0].fromId,
-              superlike: raw.MatchTo[0].superlike,
-              seen: raw.MatchTo[0].seen,
+              matchId: raw.MatchFrom[0].id,
+              matchFrom: raw.MatchFrom[0].fromId,
+              superlike: raw.MatchFrom[0].superlike,
+              seen: raw.MatchFrom[0].seen,
             }
           : false,
     };
@@ -261,7 +261,7 @@ exports.generateStack = async (req, res, next) => {
         {
           model: Match,
           as: "MatchTo",
-          // where: { [Op.and]: [{ toId: userId }, { fromId: accId }] },
+          // where: { toId: userId },
         },
       ],
       where: {
@@ -346,14 +346,12 @@ exports.generateStack = async (req, res, next) => {
       );
     });
 
-    const shuffledStack = await [
-      ...filteredStack?.filter((acc) => acc.likedMe),
-      ...shuffle(filteredStack?.filter((acc) => acc.likedMe === false)),
-    ];
+    // const shuffledStack = await [
+    //   ...filteredStack?.filter((acc) => acc.likedMe),
+    //   ...shuffle(filteredStack?.filter((acc) => acc.likedMe === false)),
+    // ];
 
-    console.log(filteredStack);
-
-    res.status(200).json({ stack: shuffledStack });
+    res.status(200).json({ stack: filteredStack });
   } catch (err) {
     next(err);
   }

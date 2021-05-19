@@ -15,6 +15,6 @@ router.patch("/seen", authController.protect, matchController.seen);
 
 router.patch("/returnlike", authController.protect, matchController.returnLike);
 
-router.delete("/", authController.protect, matchController.unmatch);
+router.delete("/:matchId", authController.protect, matchController.unmatch);
 
 module.exports = router;
