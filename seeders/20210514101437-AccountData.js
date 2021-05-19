@@ -84,32 +84,6 @@ module.exports = {
       const mFirstName = faker.name.firstName(0);
       const fFirstName = faker.name.firstName(1);
 
-      // function randomGender(length) {
-      //   var result = [];
-      //   var characters = "mf";
-      //   var charactersLength = characters.length;
-      //   for (var i = 0; i < length; i++) {
-      //     result.push(
-      //       characters.charAt(Math.floor(Math.random() * charactersLength))
-      //     );
-      //   }
-      //   return result.join("");
-      // }
-
-      // function randomSearchGender(length) {
-      //   let randomChars = "mf";
-      //   let result = "";
-      //   for (let i = 0; i < length; i++) {
-      //     if (length === 2) return "mf";
-      //     result += randomChars.charAt(
-      //       Math.floor(Math.random() * randomChars.length)
-      //     );
-      //   }
-      //   return result;
-      // }
-
-      // let searchGender = randomSearchGender(Math.floor(Math.random() * 2) + 1);
-
       data.push({
         first_name: gender === "m" ? mFirstName : fFirstName,
         gender: gender,

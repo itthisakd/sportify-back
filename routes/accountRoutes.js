@@ -17,6 +17,7 @@ router.get("/stack", authController.protect, accountController.generateStack);
 router.get("/:id", authController.protect, accountController.accountById);
 
 router.patch("/currentlocation", authController.protect, accountController.currentLocation);
+
 router.patch(
   "/updateoffset",
   authController.protect,
