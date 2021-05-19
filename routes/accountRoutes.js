@@ -4,25 +4,34 @@ const accountController = require("../controllers/accountController");
 
 const router = express.Router();
 
-router.get(
+router.get("/myaccount", authController.protect, accountController.myAccount);
+
+router.patch(
   "/myaccount",
   authController.protect,
-  accountController.myAccount
+  accountController.editMyAccount
 );
-
-router.patch("/myaccount", authController.protect, accountController.editMyAccount);
 
 router.get("/stack", authController.protect, accountController.generateStack);
 
 router.get("/:id", authController.protect, accountController.accountById);
 
-router.patch("/currentlocation", authController.protect, accountController.currentLocation);
+router.get(
+  "/matched/:id",
+  authController.protect,
+  accountController.accountMatchedById
+);
+
+router.patch(
+  "/currentlocation",
+  authController.protect,
+  accountController.currentLocation
+);
 
 router.patch(
   "/updateoffset",
   authController.protect,
   accountController.updateOffset
 );
-
 
 module.exports = router;
