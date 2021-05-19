@@ -187,6 +187,75 @@ exports.accountById = async (req, res, next) => {
   }
 };
 
+exports.accountMatchedById = async (req, res, next) => {
+  try {
+    const accId = +req.params.id;
+    const me = req.user;
+
+    const raw = await Account.findOne({
+      include: [
+        {
+          model: SportBelongsTo,
+          include: {
+            model: Sport,
+            attributes: ["sportName"],
+          },
+          attributes: ["sportId", "accountId"],
+        },
+        { model: Plans, attributes: ["id", "planName"] },
+        { model: Media, attributes: ["id", ["media", "image"]] },
+      ],
+      where: {
+        id: accId,
+      },
+    });
+
+    const account = {
+      id: raw.id,
+      firstName: raw.firstName,
+      gender: raw.gender,
+      email: raw.email,
+      dob: raw.dob,
+      aboutMe: raw.aboutMe,
+      spotify: raw.spotify,
+      instagram: raw.instagram,
+      job: raw.job,
+      school: raw.school,
+      currentLocation: raw.currentLocation,
+      lastActive: raw.lastActive,
+      searchLocation: raw.searchLocation,
+      searchAge: raw.searchAge,
+      searchGender: raw.searchGender,
+      searchDistance: raw.searchDistance,
+      showInStack: raw.showInStack,
+      showActive: raw.showActive,
+      deactivated: raw.deactivated,
+      recentlyActive:
+        DateTime.now().diff(DateTime.fromISO(raw.lastActive), "hours").hours <=
+        24
+          ? 1
+          : 0,
+      sports: raw.SportBelongsTos?.map((sport) => {
+        return {
+          sportId: sport.sportId,
+          sportName: sport.Sport.sportName,
+        };
+      }),
+      age: Math.floor(
+        DateTime.now().diff(DateTime.fromISO(raw.dob), "years").years
+      ),
+      distance: calcDistance(raw.currentLocation, me.currentLocation),
+      planId: raw.Plan.id,
+      planName: raw.Plan.planName,
+      images: raw.Media,
+    };
+
+    res.status(200).json({ account });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.generateStack = async (req, res, next) => {
   try {
     const { userId, offset } = req.user;
