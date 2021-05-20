@@ -82,7 +82,6 @@ exports.getMatches = async (req, res, next) => {
       };
     });
 
-
     res.status(200).json(newMatches.reverse());
   } catch (err) {
     next(err);
@@ -138,10 +137,19 @@ exports.seen = async (req, res, next) => {
 //ANCHOR delete
 exports.unmatch = async (req, res, next) => {
   try {
-    const { matchId } = req.params;
-    console.log("matchId", matchId);
+    const { matchId: accId } = req.params;
+    const userId = req.user.userId;
 
-    await Match.destroy({ where: { id: +matchId } });
+    const match = await Match.findOne({
+      where: {
+        [Op.or]: [
+          { [Op.and]: [{ toId: userId }, { fromId: accId }] },
+          { [Op.and]: [{ toId: accId }, { fromId: userId }] },
+        ],
+      },
+      attributes: ["id"],
+    });
+    await Match.destroy({ where: { id: match.id } });
 
     res.status(204).json({ message: "deleted successfully!!!!!" });
   } catch (err) {
