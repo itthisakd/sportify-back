@@ -126,6 +126,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     });
+    Account.hasMany(models.Message, {
+      as: "MessageFrom",
+      foreignKey: {
+        name: "fromId",
+        allowNull: false,
+      },
+    });
+    Account.hasMany(models.Message, {
+      as: "MessageTo",
+      foreignKey: {
+        name: "toId",
+        allowNull: false,
+      },
+    });
   };
 
   return Account;
