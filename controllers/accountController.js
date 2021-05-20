@@ -189,8 +189,16 @@ exports.accountById = async (req, res, next) => {
 
 exports.accountMatchedById = async (req, res, next) => {
   try {
-    const accId = +req.params.id;
-    const me = req.user;
+    const userId = +req.user.userId;
+    const myCurrentLocation = req.user.currentLocation;
+    console.log("req.user", req.user);
+
+    let accId = null;
+    if (req.params.id.includes("-")) {
+      accId = req.params.id.split("-").filter((e) => +e !== +userId)[0];
+    } else {
+      accId = +req.params.id;
+    }
 
     const raw = await Account.findOne({
       include: [
@@ -244,13 +252,13 @@ exports.accountMatchedById = async (req, res, next) => {
       age: Math.floor(
         DateTime.now().diff(DateTime.fromISO(raw.dob), "years").years
       ),
-      distance: calcDistance(raw.currentLocation, me.currentLocation),
+      distance: calcDistance(raw.currentLocation, myCurrentLocation),
       planId: raw.Plan.id,
       planName: raw.Plan.planName,
       images: raw.Media,
     };
 
-    res.status(200).json({ account });
+    res.status(200).json({ ...account, userId });
   } catch (err) {
     next(err);
   }

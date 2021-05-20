@@ -21,8 +21,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // REVIEW CASCADE ??
-  // NO, account belongs to plan so account can be deleted but plan will remain
   Plans.associate = (models) => {
     Plans.hasMany(models.Account, {
       foreignKey: {
