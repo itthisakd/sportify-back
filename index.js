@@ -49,7 +49,6 @@ const io = require("socket.io")(server, {
 const jwt = require("jsonwebtoken");
 
 io.on("connection", (socket) => {
-
   socket.on("joinRoom", (roomId) => {
     socket.join(roomId);
     console.log("JOINED ROOM " + roomId);
@@ -62,11 +61,11 @@ io.on("connection", (socket) => {
     socket.broadcast
       .to([msg.toId, msg.fromId].sort((a, b) => a - b).join("-"))
       .emit("sendChatMessageBack", msg);
-    console.log("AFTER EMIT")
+    console.log("AFTER EMIT");
   });
 
   socket.on("disconnect", () => {
-    console.log("WS DISCONNECTED")
+    console.log("WS DISCONNECTED");
   });
 });
 
