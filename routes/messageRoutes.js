@@ -4,7 +4,7 @@ const messageController = require("../controllers/messageController");
 
 const router = express.Router();
 
-router.get("/", authController.protect, messageController.getMessages);
+router.get("/:id", authController.protect, messageController.getMessages);
 
 router.post("/", authController.protect, messageController.storeMessages);
 

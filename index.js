@@ -47,13 +47,8 @@ const io = require("socket.io")(server, {
   },
 });
 const jwt = require("jsonwebtoken");
-const { formatMessage } = require("./utilities/chatMessages");
-// const {getRoomId} = require("./utilities/chatUsers")
 
 io.on("connection", (socket) => {
-  // socket.emit("message", "MESSAGE SENT");
-
-  // socket.broadcast.emit("message", formatMessage("MESSAGE FROM BROADCAST"));
 
   socket.on("joinRoom", (roomId) => {
     socket.join(roomId);

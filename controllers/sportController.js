@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 
 exports.getSports = async (req, res, next) => {
   try {
+    
     const sports = await Sport.findAll({
       attributes: [["id", "sportId"], "sportName"],
       order: [["sportName", "ASC"]],

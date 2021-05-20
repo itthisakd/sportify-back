@@ -2,14 +2,6 @@ module.exports = (sequelize, DataTypes) => {
   const Message = sequelize.define(
     "Message",
     {
-      fromId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      toId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       text: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -29,14 +21,14 @@ module.exports = (sequelize, DataTypes) => {
     Message.belongsTo(models.Account, {
       as: "MessageFrom",
       foreignKey: {
-        name: "MessageSentFrom",
+        name: "fromId",
         allowNull: false,
       },
     });
     Message.belongsTo(models.Account, {
       as: "MessageTo",
       foreignKey: {
-        name: "MessageSentTo",
+        name: "toId",
         allowNull: false,
       },
     });

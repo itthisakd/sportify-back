@@ -1,4 +1,4 @@
-const { Account, Match, sequelize, Media } = require("../models");
+const { Account, Match, sequelize, Media, Message } = require("../models");
 const { Op } = require("sequelize");
 const { DateTime } = require("luxon");
 
@@ -11,24 +11,28 @@ exports.getMatches = async (req, res, next) => {
         {
           model: Account,
           as: "MatchTo",
-          include: {
-            model: Media,
-            order: [
-              [Media, "updatedAt", "DESC"],
-              [Media, "id", "DESC"],
-            ],
-          },
+          include: [
+            {
+              model: Media,
+              order: [
+                [Media, "updatedAt", "DESC"],
+                [Media, "id", "DESC"],
+              ],
+            },
+          ],
         },
         {
           model: Account,
           as: "MatchFrom",
-          include: {
-            model: Media,
-            order: [
-              [Media, "updatedAt", "DESC"],
-              [Media, "id", "DESC"],
-            ],
-          },
+          include: [
+            {
+              model: Media,
+              order: [
+                [Media, "updatedAt", "DESC"],
+                [Media, "id", "DESC"],
+              ],
+            },
+          ],
         },
       ],
       where: {
@@ -39,10 +43,15 @@ exports.getMatches = async (req, res, next) => {
       },
     });
 
-    const matches = await raw.map((match) => {
+    const messages = await Message.findAll({
+      where: { [Op.or]: [{ fromId: userId }, { toId: userId }] },
+      order: [["time", "DESC"]],
+    });
+
+    const matches = await raw?.map((match) => {
       return {
         matchId: match.id,
-        seen: match.seen,
+        seen: match?.seen,
         fromId: match.fromId,
         toId: match.toId,
         matchedAt: match.updatedAt,
@@ -61,7 +70,20 @@ exports.getMatches = async (req, res, next) => {
       };
     });
 
-    res.status(200).json(matches.reverse());
+    const newMatches = matches?.map((match) => {
+      const latestMessage = messages.filter(
+        (message) =>
+          (message.fromId === userId && message.toId === match.matchAcc.id) ||
+          (message.fromId === match.matchAcc.id && message.toId === userId)
+      );
+      return {
+        ...match,
+        latestMessage: latestMessage[0] ? latestMessage[0] : false,
+      };
+    });
+
+
+    res.status(200).json(newMatches.reverse());
   } catch (err) {
     next(err);
   }

@@ -6,7 +6,7 @@ exports.getMessages = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const accId = req.params.id.split("-").filter((e) => +e !== +userId)[0];
-    const getAllMessages = await Message.findAll({
+    const messages = await Message.findAll({
       where: {[Op.or]: [
         {[Op.and]: [{ fromId: userId }, { toId: accId }]},
         {[Op.and]: [{ fromId: accId }, { toId: userId }]},
