@@ -1,7 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
   const SportBelongsTo = sequelize.define(
     "SportBelongsTo",
-    {},
+    {
+      skill: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+    },
     {
       underscored: true,
       timestamps: false,

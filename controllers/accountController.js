@@ -23,7 +23,7 @@ exports.myAccount = async (req, res, next) => {
             model: Sport,
             attributes: ["sportName"],
           },
-          attributes: ["sportId", "accountId"],
+          attributes: ["sportId", "accountId", "skill"],
         },
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
@@ -55,6 +55,7 @@ exports.myAccount = async (req, res, next) => {
         return {
           sportId: sport.sportId,
           sportName: sport.Sport.sportName,
+          skill: sport.skill,
         };
       }),
       planId: raw.Plan.id,
@@ -89,7 +90,7 @@ exports.accountById = async (req, res, next) => {
             model: Sport,
             attributes: ["sportName"],
           },
-          attributes: ["sportId", "accountId"],
+          attributes: ["sportId", "accountId", "skill"],
         },
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
@@ -110,7 +111,7 @@ exports.accountById = async (req, res, next) => {
             model: Sport,
             attributes: ["sportName"],
           },
-          attributes: ["sportId", "accountId"],
+          attributes: ["sportId", "accountId", "skill"],
         },
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
@@ -154,6 +155,7 @@ exports.accountById = async (req, res, next) => {
         return {
           sportId: sport.sportId,
           sportName: sport.Sport.sportName,
+          skill: sport.skill,
         };
       }),
       age: Math.floor(
@@ -208,7 +210,7 @@ exports.accountMatchedById = async (req, res, next) => {
             model: Sport,
             attributes: ["sportName"],
           },
-          attributes: ["sportId", "accountId"],
+          attributes: ["sportId", "accountId", "skill"],
         },
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
@@ -247,6 +249,7 @@ exports.accountMatchedById = async (req, res, next) => {
         return {
           sportId: sport.sportId,
           sportName: sport.Sport.sportName,
+          skill: sport.skill,
         };
       }),
       age: Math.floor(
@@ -266,7 +269,7 @@ exports.accountMatchedById = async (req, res, next) => {
 
 exports.generateStack = async (req, res, next) => {
   try {
-    const { userId, offset } = req.user;
+    const { userId, offset, currentLocation } = req.user;
 
     const rawMe = await Account.findOne({
       include: [
@@ -276,7 +279,7 @@ exports.generateStack = async (req, res, next) => {
             model: Sport,
             attributes: ["sportName"],
           },
-          attributes: ["sportId", "accountId"],
+          attributes: ["sportId", "accountId", "skill"],
         },
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
@@ -308,6 +311,7 @@ exports.generateStack = async (req, res, next) => {
         return {
           sportId: sport.sportId,
           sportName: sport.Sport.sportName,
+          sport: sport.skill,
         };
       }),
       planId: rawMe.Plans?.id,
@@ -331,7 +335,7 @@ exports.generateStack = async (req, res, next) => {
             model: Sport,
             attributes: ["sportName"],
           },
-          attributes: ["sportId", "accountId"],
+          attributes: ["sportId", "accountId", "skill"],
         },
         { model: Plans, attributes: ["id", "planName"] },
         { model: Media, attributes: ["id", ["media", "image"]] },
@@ -378,12 +382,13 @@ exports.generateStack = async (req, res, next) => {
           return {
             sportId: sport.sportId,
             sportName: sport.Sport.sportName,
+            skill: sport.skill,
           };
         }),
         age: Math.floor(
           DateTime.now().diff(DateTime.fromISO(acc.dob), "years").years
         ),
-        distance: calcDistance(acc.currentLocation, me.currentLocation),
+        distance: calcDistance(acc.currentLocation, currentLocation),
         planId: acc.Plan.id,
         planName: acc.Plan.planName,
         images: acc.Media,

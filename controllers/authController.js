@@ -119,8 +119,8 @@ exports.register = async (req, res, next) => {
       lastActive: DateTime.now().toString(),
     });
 
-    const addArr = addSports?.map((id) => {
-      return { accountId: user.id, sportId: id };
+    const addArr = addSports?.map((sport) => {
+      return { accountId: user.id, sportId: sport.sportId, skill: sport.skill };
     });
 
     if (addArr.length === 1) {
