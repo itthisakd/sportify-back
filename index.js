@@ -36,7 +36,7 @@ const server = app.listen(port, () =>
   console.log(`Server is running on port ${port}`)
 );
 // const { sequelize } = require("./models");
-// sequelize.sync({ alter: true }).then(() => console.log("DB Sync"));
+// sequelize.sync({ force: true }).then(() => console.log("DB Sync"));
 
 const io = require("socket.io")(server, {
   cors: {

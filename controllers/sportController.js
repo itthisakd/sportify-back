@@ -3,7 +3,6 @@ const { Op } = require("sequelize");
 
 exports.getSports = async (req, res, next) => {
   try {
-    
     const sports = await Sport.findAll({
       attributes: [["id", "sportId"], "sportName"],
       order: [["sportName", "ASC"]],
@@ -18,11 +17,10 @@ exports.getUserSports = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const sports = await SportBelongsTo.findAll({
-      attributes: ["sportId"],
-      order: [["id", "ASC"]],
+      attributes: ["sportId", "skill"],
       where: { accountId: userId },
     });
-    res.status(200).json({ sports: sports.map((sport) => sport.sportId) });
+    res.status(200).json({ sports });
   } catch (err) {
     next(err);
   }
@@ -34,8 +32,12 @@ exports.editUserSports = async (req, res, next) => {
     const { userId } = req.user;
 
     if (add.length > 0) {
-      const addArr = add.map((id) => {
-        return { accountId: userId, sportId: id };
+      const addArr = add.map((sport) => {
+        return {
+          accountId: userId,
+          sportId: sport.sportId,
+          skill: sport.skill,
+        };
       });
       await SportBelongsTo.bulkCreate(addArr);
     }

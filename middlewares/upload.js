@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
   },
 });
 
-//FIXME upload middleware does not work as expected so req.file in controller that follows is undefined
+// FIXME upload middleware does not work as expected so req.file in controller that follows is undefined
 exports.upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
