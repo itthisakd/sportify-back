@@ -148,12 +148,9 @@ module.exports = {
     let Fcounter = -1;
     let Mcounter = -1;
 
-    console.log("f", female.length, "m", male.length);
-
     const data = accounts.map((acc) => {
       if (acc.gender === "m") {
         Mcounter++;
-        console.log(Mcounter);
 
         return {
           account_id: acc.id,
@@ -163,7 +160,6 @@ module.exports = {
         };
       } else {
         Fcounter++;
-        console.log(Fcounter);
         return {
           account_id: acc.id,
           media: female[Fcounter % female.length],

@@ -11,7 +11,7 @@ const faker = require("faker");
 module.exports = {
   up: (queryInterface, Sequelize) => {
     let data = [];
-    let amount = 1000;
+    let amount = 10000;
     const aboutMe = [
       "I am very nice and easy going person. Let's do it together",
       "Looking for a defender/forwarder in my football team :)",

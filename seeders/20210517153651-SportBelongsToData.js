@@ -19,15 +19,14 @@ module.exports = {
         for (let i = 0; i < Math.ceil(Math.random() * 5); i++) {
           arr.push({
             account_id: id,
-            sport_id: sportIds[Math.floor(Math.random() * 10)],
-            skill: Math.ceil(Math.random() * 4)
+            sport_id: sportIds[Math.floor(Math.random() * sportIds.length)],
+            skill: Math.ceil(Math.random() * 4),
           });
         }
         return arr;
       })
       .flat();
 
-    console.log("data", data);
     return queryInterface.bulkInsert("sport_belongs_tos", data, {});
   },
 
