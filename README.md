@@ -1,1 +1,3 @@
-sportify-back
+GO TO DEVELOP BRANCH AND CHECKOUT NEW BRANCH AND CODE FORM THERE 
+
+DO NOT PUSH CONFIG, ENV or any keys or passwords
