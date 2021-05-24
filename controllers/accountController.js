@@ -193,7 +193,6 @@ exports.accountMatchedById = async (req, res, next) => {
   try {
     const userId = +req.user.userId;
     const myCurrentLocation = req.user.currentLocation;
-    console.log("req.user", req.user);
 
     let accId = null;
     if (req.params.id.includes("-")) {
@@ -349,7 +348,7 @@ exports.generateStack = async (req, res, next) => {
         id: { [Op.not]: userId },
       },
       offset: +offset,
-      limit: 30,
+      limit: 50,
     });
 
     const stack = await raw.map((acc) => {
@@ -460,9 +459,7 @@ exports.updateOffset = async (req, res, next) => {
 exports.currentLocation = async (req, res, next) => {
   try {
     const { currentLocation, addSearchLo } = req.body;
-    console.log(req.body);
     const userId = req.user.userId;
-    console.log(userId);
 
     if (addSearchLo) {
       await Account.update(
@@ -489,7 +486,6 @@ exports.editMyAccount = async (req, res, next) => {
     const body = req.body;
     const userId = req.user.userId;
 
-    console.log(body);
 
     await Account.update(body, { where: { id: userId } });
 

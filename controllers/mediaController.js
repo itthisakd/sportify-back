@@ -12,13 +12,11 @@ const upload = util.promisify(cloudinary.uploader.upload);
 exports.addPhoto = async (req, res, next) => {
   try {
     const { userId } = req.user;
-    console.log("req.file :>> ", req.file);
 
     // TODO CROP IMAGE TO CLOUDINARY
     const result = await upload(req.file.path);
     fs.unlinkSync(req.file.path);
     const media = result.secure_url;
-    console.log(result.secure_url);
 
     await Media.create({ accountId: userId, media });
 
